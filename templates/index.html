@@ -44,6 +44,7 @@
     </nav>
 
     {% if request.user.is_authenticated %}
+    {% with currency=request.user.profile.currency_symbol|default:"$" %}
     <section class="container" style="max-width:960px;margin:1.25rem auto;padding:0 1rem">
         <div class="card" style="padding:1rem;border:1px solid #e5e7eb;border-radius:14px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.05)">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
@@ -59,17 +60,23 @@
             <div style="margin-top:1rem;display:grid;gap:1rem;grid-template-columns:1fr;">
                 <form method="post" action="/budget/set-goal/">
                     {% csrf_token %}
-                    <label style="display:block;margin-bottom:.25rem">Set Budget Goal</label>
+                    <label style="display:block;margin-bottom:.25rem">Set Budget Goal ({{ currency }})</label>
                     <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-                        <input type="number" name="goal_amount" step="0.01" min="0" placeholder="Amount" style="padding:.6rem;border:1px solid #e5e7eb;border-radius:10px;flex:1 1 180px" />
+                        <div style="position:relative;flex:1 1 180px">
+                            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.7">{{ currency }}</span>
+                            <input type="number" name="goal_amount" step="0.01" min="0" placeholder="0.00" style="padding:.6rem .6rem .6rem 2rem;border:1px solid #e5e7eb;border-radius:10px;width:100%" />
+                        </div>
                         <button class="btn" type="submit">Save Goal</button>
                     </div>
                 </form>
                 <form method="post" action="/budget/add-expense/">
                     {% csrf_token %}
-                    <label style="display:block;margin-bottom:.25rem">Add Expense</label>
+                    <label style="display:block;margin-bottom:.25rem">Add Expense ({{ currency }})</label>
                     <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-                        <input type="number" name="amount" step="0.01" min="0.01" placeholder="Amount" style="padding:.6rem;border:1px solid #e5e7eb;border-radius:10px;flex:1 1 140px" />
+                        <div style="position:relative;flex:1 1 140px">
+                            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.7">{{ currency }}</span>
+                            <input type="number" name="amount" step="0.01" min="0.01" placeholder="0.00" style="padding:.6rem .6rem .6rem 2rem;border:1px solid #e5e7eb;border-radius:10px;width:100%" />
+                        </div>
                         <input type="text" name="description" placeholder="Description (optional)" style="padding:.6rem;border:1px solid #e5e7eb;border-radius:10px;flex:2 1 260px" />
                         <button class="btn" type="submit">Add</button>
                     </div>
@@ -77,6 +84,7 @@
             </div>
         </div>
     </section>
+    {% endwith %}
     {% else %}
     <section class="container" style="max-width:960px;margin:1.25rem auto;padding:0 1rem">
         <div class="card" style="padding:1rem;border:1px solid #e5e7eb;border-radius:14px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.05);display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
