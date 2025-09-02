@@ -17,21 +17,34 @@
         <input class="auth-input" type="text" name="username" placeholder="Username" required />
         <input class="auth-input" type="email" name="email" placeholder="Email" required />
         <input class="auth-input" type="password" name="password" placeholder="Password" required />
-        <select class="auth-input" name="country">
-          <option value="US">United States ($)</option>
-          <option value="GB">United Kingdom (£)</option>
-          <option value="EU">Europe (€)</option>
-          <option value="NG">Nigeria (₦)</option>
-          <option value="GH">Ghana (₵)</option>
-          <option value="KE">Kenya (KSh)</option>
-          <option value="ZA">South Africa (R)</option>
-          <option value="IN">India (₹)</option>
+        <select class="auth-input" name="country" id="country">
+          <option value="US" data-currency="$">United States ($)</option>
+          <option value="GB" data-currency="£">United Kingdom (£)</option>
+          <option value="EU" data-currency="€">Europe (€)</option>
+          <option value="NG" data-currency="₦">Nigeria (₦)</option>
+          <option value="GH" data-currency="₵">Ghana (₵)</option>
+          <option value="KE" data-currency="KSh">Kenya (KSh)</option>
+          <option value="ZA" data-currency="R">South Africa (R)</option>
+          <option value="IN" data-currency="₹">India (₹)</option>
         </select>
+        <input class="auth-input" id="currency" type="text" name="currency" placeholder="Currency" readonly />
         <button class="btn btn-primary" type="submit">Sign Up</button>
-        <div class="auth-meta">Already have an account? <a href="/budget/login/">Log in</a></div>
+        <div class="auth-meta">Already have an account? <a href="/login/">Log in</a></div>
       </form>
     </div>
   </div>
+  <script>
+    const country = document.getElementById('country');
+    const currency = document.getElementById('currency');
+    function setCurrency(){
+      const opt = country.options[country.selectedIndex];
+      currency.value = opt.getAttribute('data-currency') || '$';
+    }
+    if (country && currency) {
+      country.addEventListener('change', setCurrency);
+      setCurrency();
+    }
+  </script>
 </body>
 </html>
 

@@ -17,15 +17,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from budget import views as budget_views
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='index.html'), name='home'),
-    path('signup/', TemplateView.as_view(template_name='signup.html')),  # convenience route
-    path('login/', TemplateView.as_view(template_name='login.html')),    # convenience route
-    path('budget/', include('budget.urls')),  # Ensure this line exists
+    # Landing should be login page
+    path('', budget_views.login_view, name='landing_login'),
+    # Dedicated dashboard path (login required inside view)
+    path('dashboard/', budget_views.dashboard_page, name='dashboard_page'),
+    # Convenience routes
+    path('signup/', budget_views.signup_view, name='signup_page'),
+    path('login/', budget_views.login_view, name='login_page'),
+    path('budget/', include('budget.urls')),
 ]
 
 # Add static files serving for development

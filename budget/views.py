@@ -91,6 +91,7 @@ def signup_view(request: HttpRequest) -> HttpResponse:
         email = request.POST.get('email', '').strip()
         password = request.POST.get('password', '').strip()
         country_code = request.POST.get('country', 'US').upper()
+        currency_symbol = request.POST.get('currency', '$')
 
         if not username or not email or not password:
             return render(request, 'signup.html', {'error': 'All fields are required.'})
@@ -99,13 +100,18 @@ def signup_view(request: HttpRequest) -> HttpResponse:
         if User.objects.filter(email=email).exists():
             return render(request, 'signup.html', {'error': 'Email already registered.'})
 
+        # Ensure strong hashing (Argon2 if configured)
         user = User.objects.create_user(username=username, email=email, password=password)
         # Create default profile, budget
         from .models import UserProfile, Budget
         currency_map = {
             'US': '$', 'GB': '£', 'EU': '€', 'NG': '₦', 'GH': '₵', 'KE': 'KSh', 'ZA': 'R', 'IN': '₹',
         }
-        UserProfile.objects.create(user=user, country_code=country_code, currency_symbol=currency_map.get(country_code, '$'))
+        UserProfile.objects.create(
+            user=user,
+            country_code=country_code,
+            currency_symbol=currency_symbol or currency_map.get(country_code, '$')
+        )
         Budget.objects.get_or_create(user=user, defaults={'goal_amount': 0})
 
         login(request, user)
@@ -128,7 +134,7 @@ def login_view(request: HttpRequest) -> HttpResponse:
 
 def logout_view(request: HttpRequest) -> HttpResponse:
     logout(request)
-    return redirect('login')
+    return redirect('login_page')
 
 
 @login_required
@@ -150,6 +156,12 @@ def home_view(request: HttpRequest) -> HttpResponse:
         'status': status,
         'currency': currency,
     })
+
+
+@login_required
+def dashboard_page(request: HttpRequest) -> HttpResponse:
+    # Reuse home_view data, but render index.html dashboard
+    return home_view(request) if request.path.endswith('/home/') else render(request, 'index.html')
 
 
 @login_required
