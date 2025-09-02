@@ -18,22 +18,26 @@
       {% if error %}<div class="auth-error" style="margin-bottom:12px">{{ error }}</div>{% endif %}
       <form method="post" class="auth-form" style="display:grid;gap:14px">
         {% csrf_token %}
-        <label style="text-align:left;color:#1f2937;font-weight:600">Username
-          <input class="auth-input" type="text" name="username" placeholder="Choose a username" required style="padding-left:14px" />
-        </label>
-        <label style="text-align:left;color:#1f2937;font-weight:600">Email
-          <input class="auth-input" type="email" name="email" placeholder="you@example.com" required style="padding-left:14px" />
-        </label>
-        <label style="text-align:left;color:#1f2937;font-weight:600">Password
-          <div style="position:relative">
-            <input id="signup-password" class="auth-input" type="password" name="password" placeholder="••••••••" required style="padding-left:14px;padding-right:44px" />
-            <button type="button" id="toggle-pass" class="btn" style="position:absolute;right:6px;top:6px;background:#f1f5f9;color:#0f172a;padding:6px 10px">Show</button>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input class="form-input" type="text" name="username" placeholder="Choose a username" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" name="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="password-field">
+            <input id="signup-password" class="form-input" type="password" name="password" placeholder="••••••••" required />
+            <button type="button" id="toggle-pass" class="password-toggle">Show</button>
           </div>
-          <small id="pass-hint" style="color:#64748b">Use 8+ characters with a mix of letters & numbers.</small>
-        </label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <label style="text-align:left;color:#1f2937;font-weight:600">Country
-            <select class="auth-input" name="country" id="country">
+          <small class="form-hint">Use 8+ characters with a mix of letters & numbers.</small>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Country</label>
+            <select class="form-input" name="country" id="country">
               <option value="US" data-currency="$">United States ($)</option>
               <option value="GB" data-currency="£">United Kingdom (£)</option>
               <option value="EU" data-currency="€">Europe (€)</option>
@@ -43,10 +47,11 @@
               <option value="ZA" data-currency="R">South Africa (R)</option>
               <option value="IN" data-currency="₹">India (₹)</option>
             </select>
-          </label>
-          <label style="text-align:left;color:#1f2937;font-weight:600">Currency
-            <input class="auth-input" id="currency" type="text" name="currency" placeholder="Currency" readonly />
-          </label>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Currency</label>
+            <input class="form-input" id="currency" type="text" name="currency" placeholder="Currency" readonly />
+          </div>
         </div>
         <button class="btn" type="submit" style="background:linear-gradient(135deg,#3b82f6,#22d3ee);color:#fff;box-shadow:0 10px 24px rgba(34,211,238,.25)">Create Account</button>
         <div style="display:flex;justify-content:center;gap:8px;color:#64748b">
@@ -56,6 +61,71 @@
       </form>
     </div>
   </div>
+  <style>
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 0;
+    }
+    .form-input {
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #fff;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .form-input::placeholder {
+      color: #9ca3af;
+    }
+    .password-field {
+      position: relative;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .password-toggle:hover {
+      background: #e2e8f0;
+      color: #475569;
+    }
+    .form-hint {
+      font-size: 12px;
+      color: #64748b;
+      margin: 0;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 480px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
   <script>
     const country = document.getElementById('country');
     const currency = document.getElementById('currency');
@@ -72,18 +142,6 @@
         pass.setAttribute('type', is ? 'text' : 'password');
         toggle.textContent = is ? 'Hide' : 'Show';
       });
-    }
-  </script>
-  <script>
-    const country = document.getElementById('country');
-    const currency = document.getElementById('currency');
-    function setCurrency(){
-      const opt = country.options[country.selectedIndex];
-      currency.value = opt.getAttribute('data-currency') || '$';
-    }
-    if (country && currency) {
-      country.addEventListener('change', setCurrency);
-      setCurrency();
     }
   </script>
 </body>
