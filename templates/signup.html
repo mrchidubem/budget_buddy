@@ -38,19 +38,19 @@
           <div class="form-group">
             <label class="form-label">Country</label>
             <select class="form-input" name="country" id="country">
-              <option value="US" data-currency="$">United States ($)</option>
-              <option value="GB" data-currency="£">United Kingdom (£)</option>
-              <option value="EU" data-currency="€">Europe (€)</option>
-              <option value="NG" data-currency="₦">Nigeria (₦)</option>
-              <option value="GH" data-currency="₵">Ghana (₵)</option>
-              <option value="KE" data-currency="KSh">Kenya (KSh)</option>
-              <option value="ZA" data-currency="R">South Africa (R)</option>
-              <option value="IN" data-currency="₹">India (₹)</option>
+              <option value="US" data-currency="$" data-currency-name="US Dollar">United States</option>
+              <option value="GB" data-currency="£" data-currency-name="British Pound">United Kingdom</option>
+              <option value="EU" data-currency="€" data-currency-name="Euro">Europe</option>
+              <option value="NG" data-currency="₦" data-currency-name="Nigerian Naira">Nigeria</option>
+              <option value="GH" data-currency="₵" data-currency-name="Ghanaian Cedi">Ghana</option>
+              <option value="KE" data-currency="KSh" data-currency-name="Kenyan Shilling">Kenya</option>
+              <option value="ZA" data-currency="R" data-currency-name="South African Rand">South Africa</option>
+              <option value="IN" data-currency="₹" data-currency-name="Indian Rupee">India</option>
             </select>
           </div>
           <div class="form-group">
             <label class="form-label">Currency</label>
-            <input class="form-input" id="currency" type="text" name="currency" placeholder="Currency" readonly />
+            <input class="form-input currency-display" id="currency" type="text" name="currency" placeholder="Currency" readonly />
           </div>
         </div>
         <button class="btn" type="submit" style="background:linear-gradient(135deg,#3b82f6,#22d3ee);color:#fff;box-shadow:0 10px 24px rgba(34,211,238,.25)">Create Account</button>
@@ -88,6 +88,12 @@
     }
     .form-input::placeholder {
       color: #9ca3af;
+    }
+    .currency-display {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-weight: 500;
+      color: #1f2937;
+      letter-spacing: 0.025em;
     }
 
     .password-field {
@@ -132,7 +138,9 @@
     const currency = document.getElementById('currency');
     function setCurrency(){
       const opt = country.options[country.selectedIndex];
-      currency.value = opt.getAttribute('data-currency') || '$';
+      const symbol = opt.getAttribute('data-currency') || '$';
+      const name = opt.getAttribute('data-currency-name') || 'US Dollar';
+      currency.value = `${symbol} ${name}`;
     }
     if (country && currency) { country.addEventListener('change', setCurrency); setCurrency(); }
     const toggle = document.getElementById('toggle-pass');
