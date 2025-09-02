@@ -1,0 +1,375 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Buddy - Empowering Financial Freedom</title>
+    <meta name="description" content="Take control of your finances with Budget Buddy. Smart budgeting tools designed to help you overcome poverty and build lasting wealth. Start your journey to financial freedom today.">
+    <meta name="author" content="Budget Buddy">
+    <meta property="og:title" content="Budget Buddy - Empowering Financial Freedom">
+    <meta property="og:description" content="Smart budgeting tools designed to help you overcome poverty and build lasting wealth. Empowering lives out of poverty one budget at a time.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@budgetbuddy">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js for advanced analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-logo">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <span class="brand-text">Budget Buddy</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <button class="nav-cta">Get Started</button>
+            </div>
+            <div class="nav-toggle" id="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Take Control of Your Financial Future</h1>
+                <p class="hero-subtitle">Smart budgeting tools designed to help you overcome poverty and build lasting wealth. Start your journey to financial freedom today.</p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary">Start Budgeting</button>
+                    <button class="btn btn-secondary">Learn More</button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-chart">
+                    <div class="chart-container">
+                        <svg class="chart-svg" viewBox="0 0 200 200">
+                            <circle class="chart-bg" cx="100" cy="100" r="80"></circle>
+                            <circle class="chart-progress" cx="100" cy="100" r="80" stroke-dasharray="502.4" stroke-dashoffset="376.8"></circle>
+                        </svg>
+                        <div class="chart-center">
+                            <span class="chart-percentage">75%</span>
+                            <span class="chart-label">Savings Rate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose Budget Buddy?</h2>
+                <p class="section-subtitle">Empowering lives out of poverty one budget at a time</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Analytics</h3>
+                    <p class="feature-description">AI-powered insights help you make informed financial decisions and track your progress with beautiful visualizations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Secure & Private</h3>
+                    <p class="feature-description">Your financial data stays completely private and secure. We never share or sell your personal information.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Mobile First</h3>
+                    <p class="feature-description">Access your budget anywhere, anytime with our responsive design that works perfectly on all devices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Budget Calculator Section -->
+    <section class="calculator" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Create Your Budget</h2>
+                <p class="section-subtitle">Enter your monthly income and expenses to get personalized financial advice</p>
+            </div>
+            <div class="calculator-container">
+                <div class="calculator-form">
+                    <form id="budget-form">
+                        <div class="form-group">
+                            <label for="income" class="form-label">Monthly Income</label>
+                            <div class="input-wrapper">
+                                <span class="input-prefix">$</span>
+                                <input type="number" id="income" name="income" class="form-input" placeholder="0.00" min="0" step="0.01" required>
+                            </div>
+                            <div class="validation-message" id="income-validation"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Monthly Expenses</label>
+                            <div class="expenses-list" id="expenses-list">
+                                <div class="expense-item">
+                                    <div class="expense-inputs">
+                                        <input type="text" name="expense-name[]" class="form-input expense-name" placeholder="Expense name (e.g., Rent)" required>
+                                        <div class="input-wrapper">
+                                            <span class="input-prefix">$</span>
+                                            <input type="number" name="expense-amount[]" class="form-input expense-amount" placeholder="0.00" min="0" step="0.01" required>
+                                        </div>
+                                    </div>
+                                    <div class="expense-category">
+                                        <select name="expense-category[]" class="form-select">
+                                            <option value="">Select Category</option>
+                                            <option value="housing">🏠 Housing</option>
+                                            <option value="transportation">🚗 Transportation</option>
+                                            <option value="food">🍽️ Food & Dining</option>
+                                            <option value="utilities">⚡ Utilities</option>
+                                            <option value="entertainment">🎬 Entertainment</option>
+                                            <option value="healthcare">🏥 Healthcare</option>
+                                            <option value="education">📚 Education</option>
+                                            <option value="other">📦 Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline" id="add-expense">
+                                <i class="fas fa-plus"></i> Add Another Expense
+                            </button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="savings-goal" class="form-label">Monthly Savings Goal (Optional)</label>
+                            <div class="input-wrapper">
+                                <span class="input-prefix">$</span>
+                                <input type="number" id="savings-goal" name="savings-goal" class="form-input" placeholder="0.00" min="0" step="0.01">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-full">
+                            <i class="fas fa-calculator"></i> Calculate Budget
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="calculator-results" id="calculator-results">
+                    <div class="results-header">
+                        <h3>Your Budget Analysis</h3>
+                    </div>
+                    <div class="results-summary">
+                        <div class="summary-item">
+                            <div class="summary-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="summary-content">
+                                <span class="summary-label">Total Income</span>
+                                <span class="summary-value" id="total-income">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="summary-content">
+                                <span class="summary-label">Total Expenses</span>
+                                <span class="summary-value" id="total-expenses">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-icon">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <div class="summary-content">
+                                <span class="summary-label">Savings</span>
+                                <span class="summary-value" id="total-savings">$0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="savings-progress">
+                        <div class="progress-header">
+                            <span class="progress-label">Savings Rate</span>
+                            <span class="progress-percentage" id="savings-rate">0%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="goal-indicator" id="goal-indicator" style="display: none;">
+                            <i class="fas fa-target"></i>
+                            <span>Goal: <span id="goal-amount">$0.00</span></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Analytics Section -->
+                    <div class="analytics-section">
+                        <h4 class="analytics-title">
+                            <i class="fas fa-chart-pie"></i> Spending Breakdown
+                        </h4>
+                        <div class="chart-container-analytics">
+                            <canvas id="expense-chart" width="300" height="200"></canvas>
+                        </div>
+                        <div class="category-breakdown" id="category-breakdown"></div>
+                    </div>
+                    
+                    <div class="financial-advice">
+                        <div class="advice-header">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>AI Financial Advice</h4>
+                        </div>
+                        <p class="advice-text" id="advice-text">Enter your budget details to receive personalized financial advice.</p>
+                        <div class="advice-actions">
+                            <button class="btn btn-outline btn-sm" id="save-advice">
+                                <i class="fas fa-bookmark"></i> Save Advice
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="share-advice">
+                                <i class="fas fa-share"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h4 class="quick-actions-title">
+                            <i class="fas fa-bolt"></i> Quick Actions
+                        </h4>
+                        <div class="action-buttons">
+                            <button class="btn btn-outline btn-sm" id="export-budget">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="save-template">
+                                <i class="fas fa-save"></i> Save Template
+                            </button>
+                            <button class="btn btn-outline btn-sm" id="compare-month">
+                                <i class="fas fa-chart-bar"></i> Compare
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Features Section -->
+    <section class="enhanced-features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Advanced Financial Tools</h2>
+                <p class="section-subtitle">Take your financial planning to the next level</p>
+            </div>
+            <div class="enhanced-features-grid">
+                <div class="enhanced-feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-trending-up"></i>
+                    </div>
+                    <h3>Trend Analysis</h3>
+                    <p>Track your spending patterns over time and identify areas for improvement.</p>
+                    <div class="feature-preview">
+                        <canvas id="trend-chart" width="200" height="100"></canvas>
+                    </div>
+                </div>
+                <div class="enhanced-feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Goal Tracking</h3>
+                    <p>Set financial goals and track your progress with visual milestones.</p>
+                    <div class="goal-progress">
+                        <div class="goal-item">
+                            <span>Emergency Fund</span>
+                            <div class="mini-progress">
+                                <div class="mini-progress-fill" style="width: 65%"></div>
+                            </div>
+                            <span>65%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="enhanced-feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Smart Alerts</h3>
+                    <p>Get notified about unusual spending patterns and budget milestones.</p>
+                    <div class="alert-preview">
+                        <div class="alert-item">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Food spending up 20% this month</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Ready to Start Your Financial Journey?</h2>
+                <p class="section-subtitle">Join thousands of users who have transformed their financial lives with Budget Buddy</p>
+            </div>
+            <div class="contact-actions">
+                <button class="btn btn-primary btn-large">Get Started Today</button>
+                <button class="btn btn-secondary btn-large">Schedule a Demo</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="brand-logo">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <span class="brand-text">Budget Buddy</span>
+                </div>
+                <p class="footer-mission">Empowering lives out of poverty one budget at a time.</p>
+                <div class="footer-actions">
+                    <button class="btn btn-outline" id="dark-mode-toggle">
+                        <i class="fas fa-moon"></i> Dark Mode
+                    </button>
+                    <button class="btn btn-outline" id="reset-budget">
+                        <i class="fas fa-redo"></i> Reset Budget
+                    </button>
+                    <button class="btn btn-outline" id="export-data">
+                        <i class="fas fa-download"></i> Export Data
+                    </button>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Budget Buddy. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div class="notification-toast" id="notification-toast"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-wallet fa-spin"></i>
+            <span>Processing...</span>
+        </div>
+    </div>
+
+    <script src="{% static 'script.js' %}"></script>
+</body>
+</html>
