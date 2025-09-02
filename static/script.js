@@ -17,6 +17,7 @@ class BudgetBuddy {
         this.initializeChart();
         this.loadSavedData();
         this.refreshDashboardIfLoggedIn();
+        this.setupSpaAuth();
     }
 
     setupEventListeners() {
@@ -277,6 +278,95 @@ class BudgetBuddy {
                 }
             })
             .catch(() => {});
+    }
+
+    setupSpaAuth() {
+        const signupForm = document.getElementById('spa-signup-form');
+        if (signupForm) {
+            signupForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(signupForm);
+                const payload = Object.fromEntries(formData.entries());
+                this.ensureCsrfToken().then(() => fetch('/budget/auth/signup/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCSRFToken(),
+                    },
+                    body: JSON.stringify(payload),
+                })).then(r => r.json()).then(data => {
+                    if (data.error) return this.showNotification(data.error, 'error');
+                    window.BUDGET_BUDDY_USER = { isAuthenticated: true, id: data.user.id };
+                    this.showNotification('Signup successful!', 'success');
+                    this.loadDashboard();
+                }).catch(() => this.showNotification('Signup failed', 'error'));
+            });
+        }
+
+        const loginForm = document.getElementById('spa-login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(loginForm);
+                const payload = Object.fromEntries(formData.entries());
+                this.ensureCsrfToken().then(() => fetch('/budget/auth/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCSRFToken(),
+                    },
+                    body: JSON.stringify(payload),
+                })).then(r => r.json()).then(data => {
+                    if (data.error) return this.showNotification(data.error, 'error');
+                    window.BUDGET_BUDDY_USER = { isAuthenticated: true, id: data.user.id };
+                    this.showNotification('Login successful!', 'success');
+                    this.loadDashboard();
+                }).catch(() => this.showNotification('Login failed', 'error'));
+            });
+        }
+
+        // Intercept forms for goal and expense if present on the page to use JSON
+        const goalForm = document.querySelector('form[action="/budget/set-goal/"]');
+        if (goalForm) {
+            goalForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const goalInput = goalForm.querySelector('input[name="goal_amount"]');
+                const goal_amount = parseFloat(goalInput.value || '0') || 0;
+                this.ensureCsrfToken().then(() => fetch('/budget/dashboard/set-goal/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCSRFToken(),
+                    },
+                    body: JSON.stringify({ goal_amount }),
+                })).then(r => r.json()).then(data => {
+                    if (data.error) return this.showNotification(data.error, 'error');
+                    this.showNotification('Budget goal updated', 'success');
+                    this.loadDashboard();
+                }).catch(() => this.showNotification('Failed to set goal', 'error'));
+            });
+        }
+
+        const expenseForm = document.querySelector('form[action="/budget/add-expense/"]');
+        if (expenseForm) {
+            expenseForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const amount = parseFloat(expenseForm.querySelector('input[name="amount"]').value || '0');
+                const description = expenseForm.querySelector('input[name="description"]').value || '';
+                this.ensureCsrfToken().then(() => fetch('/budget/dashboard/add-expense/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCSRFToken(),
+                    },
+                    body: JSON.stringify({ amount, description }),
+                })).then(r => r.json()).then(data => {
+                    if (data.error) return this.showNotification(data.error, 'error');
+                    this.showNotification('Expense added', 'success');
+                    this.loadDashboard();
+                }).catch(() => this.showNotification('Failed to add expense', 'error'));
+            });
+        }
     }
 
     addExpenseField() {
