@@ -130,7 +130,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # Supabase Configuration
 SUPABASE_URL = 'https://hyxhxyvgqhljahfkwiwu.supabase.co'
 SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eGh4eXZncWhsamFoZmt3aXd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2OTQxMTIsImV4cCI6MjA3MjI3MDExMn0.RN23AzV2SlWuxfbbQq2wkb1sramB_IvnAo1GjWoEmGo'
-SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', 'your_service_role_key_here')
+SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eGh4eXZncWhsamFoZmt3aXd1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY5NDExMiwiZXhwIjoyMDcyMjcwMTEyfQ.tiz9alvSp5lXK6yrn0k_kJU6zrM1c52jOc49QOYjIMA')
 
 # Security Settings
 SECURE_BROWSER_XSS_FILTER = True

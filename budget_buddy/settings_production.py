@@ -13,7 +13,7 @@ DEBUG = False
 
 # Production hosts
 ALLOWED_HOSTS = [
-    'your-app-name.onrender.com',  # Replace with your actual Render domain
+    'budget-buddy-vibe-coding.onrender.com',  # Your actual Render domain
     '.onrender.com',
     'localhost',
     '127.0.0.1',
@@ -86,7 +86,7 @@ LOGGING = {
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
-    "https://your-app-name.onrender.com",  # Replace with your actual domain
+    "https://budget-buddy-vibe-coding.onrender.com",  # Your actual domain
     "https://*.onrender.com",
 ]
 
