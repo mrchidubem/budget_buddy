@@ -8,31 +8,72 @@
   <link rel="stylesheet" href="{% static 'style.css' %}" />
 </head>
 <body>
-  <div class="auth-page">
-    <div class="auth-card">
-      <h1 class="auth-title">Create your account</h1>
-      {% if error %}<div class="auth-error">{{ error }}</div>{% endif %}
-      <form method="post" class="auth-form">
+  <div class="auth-page" style="background:radial-gradient(1200px 600px at 10% -10%, #dbeafe 0%, transparent 60%), radial-gradient(1000px 600px at 110% -20%, #e0f2fe 0%, transparent 60%), linear-gradient(180deg,#eef2ff 0%, #eaf3ff 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px">
+    <div class="auth-card" style="max-width:620px;width:100%;padding:28px;border-radius:20px;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);box-shadow:0 30px 60px rgba(2,6,23,.12), 0 12px 24px rgba(2,6,23,.08)">
+      <div style="text-align:center">
+        <div style="width:64px;height:64px;margin:0 auto 10px;border-radius:16px;background:linear-gradient(135deg,#60a5fa,#22d3ee);display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px">✍️</div>
+        <h1 style="font-size:30px;margin:8px 0 6px;color:#0f172a;font-weight:800">Create your account</h1>
+        <p style="margin:0 0 16px;color:#64748b">Join Budget Buddy and start building wealth—one smart choice at a time.</p>
+      </div>
+      {% if error %}<div class="auth-error" style="margin-bottom:12px">{{ error }}</div>{% endif %}
+      <form method="post" class="auth-form" style="display:grid;gap:14px">
         {% csrf_token %}
-        <input class="auth-input" type="text" name="username" placeholder="Username" required />
-        <input class="auth-input" type="email" name="email" placeholder="Email" required />
-        <input class="auth-input" type="password" name="password" placeholder="Password" required />
-        <select class="auth-input" name="country" id="country">
-          <option value="US" data-currency="$">United States ($)</option>
-          <option value="GB" data-currency="£">United Kingdom (£)</option>
-          <option value="EU" data-currency="€">Europe (€)</option>
-          <option value="NG" data-currency="₦">Nigeria (₦)</option>
-          <option value="GH" data-currency="₵">Ghana (₵)</option>
-          <option value="KE" data-currency="KSh">Kenya (KSh)</option>
-          <option value="ZA" data-currency="R">South Africa (R)</option>
-          <option value="IN" data-currency="₹">India (₹)</option>
-        </select>
-        <input class="auth-input" id="currency" type="text" name="currency" placeholder="Currency" readonly />
-        <button class="btn btn-primary" type="submit">Sign Up</button>
-        <div class="auth-meta">Already have an account? <a href="/login/">Log in</a></div>
+        <label style="text-align:left;color:#1f2937;font-weight:600">Username
+          <input class="auth-input" type="text" name="username" placeholder="Choose a username" required style="padding-left:14px" />
+        </label>
+        <label style="text-align:left;color:#1f2937;font-weight:600">Email
+          <input class="auth-input" type="email" name="email" placeholder="you@example.com" required style="padding-left:14px" />
+        </label>
+        <label style="text-align:left;color:#1f2937;font-weight:600">Password
+          <div style="position:relative">
+            <input id="signup-password" class="auth-input" type="password" name="password" placeholder="••••••••" required style="padding-left:14px;padding-right:44px" />
+            <button type="button" id="toggle-pass" class="btn" style="position:absolute;right:6px;top:6px;background:#f1f5f9;color:#0f172a;padding:6px 10px">Show</button>
+          </div>
+          <small id="pass-hint" style="color:#64748b">Use 8+ characters with a mix of letters & numbers.</small>
+        </label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <label style="text-align:left;color:#1f2937;font-weight:600">Country
+            <select class="auth-input" name="country" id="country">
+              <option value="US" data-currency="$">United States ($)</option>
+              <option value="GB" data-currency="£">United Kingdom (£)</option>
+              <option value="EU" data-currency="€">Europe (€)</option>
+              <option value="NG" data-currency="₦">Nigeria (₦)</option>
+              <option value="GH" data-currency="₵">Ghana (₵)</option>
+              <option value="KE" data-currency="KSh">Kenya (KSh)</option>
+              <option value="ZA" data-currency="R">South Africa (R)</option>
+              <option value="IN" data-currency="₹">India (₹)</option>
+            </select>
+          </label>
+          <label style="text-align:left;color:#1f2937;font-weight:600">Currency
+            <input class="auth-input" id="currency" type="text" name="currency" placeholder="Currency" readonly />
+          </label>
+        </div>
+        <button class="btn" type="submit" style="background:linear-gradient(135deg,#3b82f6,#22d3ee);color:#fff;box-shadow:0 10px 24px rgba(34,211,238,.25)">Create Account</button>
+        <div style="display:flex;justify-content:center;gap:8px;color:#64748b">
+          <span>Already have an account?</span> <a href="/login/">Log in</a>
+        </div>
+        <small style="text-align:center;color:#94a3b8">By continuing you agree to our Terms and Privacy Policy.</small>
       </form>
     </div>
   </div>
+  <script>
+    const country = document.getElementById('country');
+    const currency = document.getElementById('currency');
+    function setCurrency(){
+      const opt = country.options[country.selectedIndex];
+      currency.value = opt.getAttribute('data-currency') || '$';
+    }
+    if (country && currency) { country.addEventListener('change', setCurrency); setCurrency(); }
+    const toggle = document.getElementById('toggle-pass');
+    const pass = document.getElementById('signup-password');
+    if (toggle && pass) {
+      toggle.addEventListener('click', () => {
+        const is = pass.getAttribute('type') === 'password';
+        pass.setAttribute('type', is ? 'text' : 'password');
+        toggle.textContent = is ? 'Hide' : 'Show';
+      });
+    }
+  </script>
   <script>
     const country = document.getElementById('country');
     const currency = document.getElementById('currency');
