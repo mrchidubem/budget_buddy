@@ -33,7 +33,11 @@
                 <a href="#features" class="nav-link">Features</a>
                 <a href="#about" class="nav-link">About</a>
                 <a href="#contact" class="nav-link">Contact</a>
-                <button class="nav-cta">Get Started</button>
+                {% if request.user.is_authenticated %}
+                <a href="/budget/home/" class="nav-cta" style="text-decoration:none;display:inline-flex;align-items:center">Dashboard</a>
+                {% else %}
+                <a href="/budget/signup/" class="nav-cta" style="text-decoration:none;display:inline-flex;align-items:center">Get Started</a>
+                {% endif %}
             </div>
             <div class="nav-toggle" id="nav-toggle">
                 <span></span>
@@ -107,8 +111,13 @@
                 <h1 class="hero-title">Take Control of Your Financial Future</h1>
                 <p class="hero-subtitle">Smart budgeting tools designed to help you overcome poverty and build lasting wealth. Start your journey to financial freedom today.</p>
                 <div class="hero-actions">
-                    <button class="btn btn-primary">Start Budgeting</button>
-                    <button class="btn btn-secondary">Learn More</button>
+                    {% if request.user.is_authenticated %}
+                    <a class="btn btn-primary" href="/budget/home/" style="text-decoration:none">Open Dashboard</a>
+                    <a class="btn btn-secondary" href="/budget/logout/" style="text-decoration:none">Logout</a>
+                    {% else %}
+                    <a class="btn btn-primary" href="/budget/signup/" style="text-decoration:none">Start Budgeting</a>
+                    <a class="btn btn-secondary" href="/budget/login/" style="text-decoration:none">Log In</a>
+                    {% endif %}
                 </div>
             </div>
             <div class="hero-visual">
