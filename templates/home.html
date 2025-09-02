@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home - Budget Buddy</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    .container{max-width:960px;margin:2rem auto;padding:0 1rem}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin:1.5rem 0}
+    .card{padding:1.25rem;border:1px solid #e5e7eb;border-radius:14px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.05)}
+    .progress-wrap{margin-top:1rem}
+    .progress{position:relative;height:14px;background:#f3f4f6;border-radius:9999px;overflow:hidden}
+    .progress>div{height:100%;background:linear-gradient(90deg,#10b981,#3b82f6);width:0;transition:width .6s ease}
+    .status{margin-top:.75rem;font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <h2>Welcome, {{ username }}</h2>
+      <a class="btn" href="/budget/logout/" style="text-decoration:none">Logout</a>
+    </div>
+
+    <div class="card">
+      <div>Total Spent: <strong>{{ currency }}{{ total_spent }}</strong></div>
+      <div>Budget Goal: <strong>{{ currency }}{{ goal }}</strong></div>
+      <div class="progress-wrap">
+        <div class="progress"><div style="width: {{ progress }}%"></div></div>
+        <div class="status">{{ status }}</div>
+      </div>
+    </div>
+
+    <div style="margin-top:1rem">
+      <a href="/" class="btn" style="text-decoration:none">Back to Planner</a>
+    </div>
+  </div>
+</body>
+</html>
+
+

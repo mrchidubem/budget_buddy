@@ -1,9 +1,14 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views import View
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db.models import Sum
 import json
 import logging
 from supabase import create_client, Client
@@ -76,6 +81,75 @@ class SupabaseManager:
 
 # Initialize Supabase manager
 supabase_manager = SupabaseManager()
+
+
+# ----------------------------- AUTH VIEWS -----------------------------------
+@require_http_methods(["GET", "POST"]) 
+def signup_view(request: HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+        country_code = request.POST.get('country', 'US').upper()
+
+        if not username or not email or not password:
+            return render(request, 'signup.html', {'error': 'All fields are required.'})
+        if User.objects.filter(username=username).exists():
+            return render(request, 'signup.html', {'error': 'Username already taken.'})
+        if User.objects.filter(email=email).exists():
+            return render(request, 'signup.html', {'error': 'Email already registered.'})
+
+        user = User.objects.create_user(username=username, email=email, password=password)
+        # Create default profile, budget
+        from .models import UserProfile, Budget
+        currency_map = {
+            'US': '$', 'GB': '£', 'EU': '€', 'NG': '₦', 'GH': '₵', 'KE': 'KSh', 'ZA': 'R', 'IN': '₹',
+        }
+        UserProfile.objects.create(user=user, country_code=country_code, currency_symbol=currency_map.get(country_code, '$'))
+        Budget.objects.get_or_create(user=user, defaults={'goal_amount': 0})
+
+        login(request, user)
+        return redirect('home_page')
+    return render(request, 'signup.html')
+
+
+@require_http_methods(["GET", "POST"]) 
+def login_view(request: HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home_page')
+        return render(request, 'login.html', {'error': 'Invalid credentials.'})
+    return render(request, 'login.html')
+
+
+def logout_view(request: HttpRequest) -> HttpResponse:
+    logout(request)
+    return redirect('login')
+
+
+@login_required
+def home_view(request: HttpRequest) -> HttpResponse:
+    from .models import Budget, Expense
+    budget = Budget.objects.filter(user=request.user).first()
+    total_spent = Expense.objects.filter(user=request.user).aggregate(total=Sum('amount'))['total'] or 0
+    goal = budget.goal_amount if budget else 0
+    # Progress and status
+    progress = float(total_spent) / float(goal) * 100 if goal and goal > 0 else 0.0
+    status = "You're on track 🎯" if progress < 50 else ("Caution ⚠️, watch your spending" if progress < 80 else ("Alert 🚨 You are close to your budget limit!" if progress <= 100 else "Over budget ❌"))
+    profile = getattr(request.user, 'profile', None)
+    currency = profile.currency_symbol if profile else '$'
+    return render(request, 'home.html', {
+        'username': request.user.username,
+        'total_spent': total_spent,
+        'goal': goal,
+        'progress': round(progress, 2),
+        'status': status,
+        'currency': currency,
+    })
 
 @ensure_csrf_cookie
 @require_http_methods(["GET", "POST"])
