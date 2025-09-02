@@ -1,5 +1,5 @@
 """
-Production settings for Budget Buddy on Rock.app
+Production settings for Budget Buddy on Render
 """
 import os
 from pathlib import Path
@@ -13,8 +13,8 @@ DEBUG = False
 
 # Production hosts
 ALLOWED_HOSTS = [
-    'your-app-name.rock.app',  # Replace with your actual Rock.app domain
-    '.rock.app',
+    'your-app-name.onrender.com',  # Replace with your actual Render domain
+    '.onrender.com',
     'localhost',
     '127.0.0.1',
 ]
@@ -32,11 +32,14 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+# WhiteNoise configuration for static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Database - Use PostgreSQL on Rock.app, fallback to SQLite for local testing
+# Database - Use PostgreSQL on Render, fallback to SQLite for local testing
 if os.environ.get('DB_HOST'):
     DATABASES = {
         'default': {
@@ -79,8 +82,8 @@ LOGGING = {
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
-    "https://your-app-name.rock.app",  # Replace with your actual domain
-    "https://*.rock.app",
+    "https://your-app-name.onrender.com",  # Replace with your actual domain
+    "https://*.onrender.com",
 ]
 
 # HTTPS settings (comment out for local testing)
