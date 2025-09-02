@@ -496,6 +496,23 @@ def delete_expense_json(request: HttpRequest) -> JsonResponse:
         return JsonResponse({'error': 'Failed to delete expense'}, status=400)
 
 
+@require_http_methods(["GET"]) 
+def db_health(request: HttpRequest) -> JsonResponse:
+    """Simple DB health check returning row counts per table."""
+    from .models import Budget, Expense, UserProfile
+    try:
+        return JsonResponse({
+            'ok': True,
+            'users': User.objects.count(),
+            'profiles': UserProfile.objects.count(),
+            'budgets': Budget.objects.count(),
+            'expenses': Expense.objects.count(),
+        })
+    except Exception as e:
+        logger.error(f"DB health error: {e}")
+        return JsonResponse({'ok': False, 'error': str(e)}, status=500)
+
+
 @require_http_methods(["POST"])
 def set_goal_json(request: HttpRequest) -> JsonResponse:
     if not request.user.is_authenticated:

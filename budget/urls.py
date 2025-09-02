@@ -23,4 +23,5 @@ urlpatterns = [
     path('dashboard/set-goal/', views.set_goal_json, name='set_goal_json'),
     path('dashboard/add-expense/', views.add_expense_json, name='add_expense_json'),
     path('dashboard/delete-expense/', views.delete_expense_json, name='delete_expense_json'),
+    path('db-health/', views.db_health, name='db_health'),
 ]
