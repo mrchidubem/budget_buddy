@@ -31,6 +31,25 @@
       </div>
     </div>
 
+    <div class="card" style="margin-top:1rem">
+      <h3 style="margin:0 0 .75rem">Set Budget Goal</h3>
+      <form method="post" action="/budget/set-goal/">
+        {% csrf_token %}
+        <input type="number" name="goal_amount" step="0.01" min="0" placeholder="Amount" style="padding:.6rem;border:1px solid #e5e7eb;border-radius:10px" />
+        <button class="btn" type="submit" style="margin-left:.5rem">Save Goal</button>
+      </form>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <h3 style="margin:0 0 .75rem">Add Expense</h3>
+      <form method="post" action="/budget/add-expense/" style="display:flex;gap:.5rem;flex-wrap:wrap">
+        {% csrf_token %}
+        <input type="number" name="amount" step="0.01" min="0.01" placeholder="Amount" style="padding:.6rem;border:1px solid #e5e7eb;border-radius:10px;flex:1 1 140px" />
+        <input type="text" name="description" placeholder="Description (optional)" style="padding:.6rem;border:1px solid #e5e7eb;border-radius:10px;flex:2 1 260px" />
+        <button class="btn" type="submit">Add</button>
+      </form>
+    </div>
+
     <div style="margin-top:1rem">
       <a href="/" class="btn" style="text-decoration:none">Back to Planner</a>
     </div>

@@ -151,6 +151,37 @@ def home_view(request: HttpRequest) -> HttpResponse:
         'currency': currency,
     })
 
+
+@login_required
+@require_http_methods(["POST"])
+def set_budget_goal_view(request: HttpRequest) -> HttpResponse:
+    from .models import Budget
+    try:
+        goal_raw = request.POST.get('goal_amount', '0').strip()
+        goal_amount = float(goal_raw)
+    except ValueError:
+        return redirect('home_page')
+    budget, _ = Budget.objects.get_or_create(user=request.user)
+    budget.goal_amount = goal_amount
+    budget.save()
+    return redirect('home_page')
+
+
+@login_required
+@require_http_methods(["POST"])
+def add_expense_view(request: HttpRequest) -> HttpResponse:
+    from .models import Expense
+    amount_raw = request.POST.get('amount', '0').strip()
+    description = request.POST.get('description', '').strip()
+    try:
+        amount = float(amount_raw)
+    except ValueError:
+        return redirect('home_page')
+    if amount <= 0:
+        return redirect('home_page')
+    Expense.objects.create(user=request.user, amount=amount, description=description)
+    return redirect('home_page')
+
 @ensure_csrf_cookie
 @require_http_methods(["GET", "POST"])
 def budget_api(request):
