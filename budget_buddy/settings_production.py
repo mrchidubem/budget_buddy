@@ -14,13 +14,17 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-8w11s$_ywb=2lb^4db9kz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-# Production hosts
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else [
+# Production hosts - Force override base settings
+ALLOWED_HOSTS = [
     'budget-buddy-vibe-coding.onrender.com',  # Your actual Render domain
     '.onrender.com',
     'localhost',
     '127.0.0.1',
 ]
+
+# Also allow environment variable override
+if os.environ.get('ALLOWED_HOSTS'):
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
 
 # Security settings for production
 SECURE_BROWSER_XSS_FILTER = True
@@ -86,6 +90,12 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+# Debug environment variables
+print(f"DEBUG: Environment variables loaded")
+print(f"DEBUG: ALLOWED_HOSTS = {ALLOWED_HOSTS}")
+print(f"DEBUG: DEBUG = {DEBUG}")
+print(f"DEBUG: SECRET_KEY = {SECRET_KEY[:20]}...")
 
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
