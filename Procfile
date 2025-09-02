@@ -1,1 +1,1 @@
-web: gunicorn budget_buddy.wsgi:application --bind 0.0.0.0:$PORT
+web: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 budget_buddy.wsgi:application
