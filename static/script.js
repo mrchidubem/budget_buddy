@@ -16,6 +16,7 @@ class BudgetBuddy {
         this.animateOnScroll();
         this.initializeChart();
         this.loadSavedData();
+        this.refreshDashboardIfLoggedIn();
     }
 
     setupEventListeners() {
@@ -223,6 +224,59 @@ class BudgetBuddy {
                 this.saveBudgetToSupabase();
             });
         }
+    }
+
+    refreshDashboardIfLoggedIn() {
+        // Update UI if authenticated
+        fetch('/budget/auth/status/', { credentials: 'same-origin' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.authenticated) {
+                    window.BUDGET_BUDDY_USER = { isAuthenticated: true, id: data.user.id };
+                    this.loadDashboard();
+                }
+            })
+            .catch(() => {});
+    }
+
+    loadDashboard() {
+        fetch('/budget/dashboard/', { credentials: 'same-origin' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) return;
+                // Inject results into existing widgets
+                const incomeEl = document.getElementById('total-income');
+                const expensesEl = document.getElementById('total-expenses');
+                const savingsEl = document.getElementById('total-savings');
+                const savingsRateEl = document.getElementById('savings-rate');
+                const progressFill = document.getElementById('progress-fill');
+                if (incomeEl && expensesEl && savingsEl && savingsRateEl && progressFill) {
+                    const income = data.goal > 0 ? data.total_spent + (data.goal - data.total_spent) : data.total_spent;
+                    const savings = Math.max(0, income - data.total_spent);
+                    incomeEl.textContent = `${data.currency}${income.toFixed(2)}`;
+                    expensesEl.textContent = `${data.currency}${data.total_spent.toFixed(2)}`;
+                    savingsEl.textContent = `${data.currency}${savings.toFixed(2)}`;
+                    savingsRateEl.textContent = `${data.progress.toFixed(1)}%`;
+                    this.updateProgressBar(data.progress);
+                }
+                // Render expenses list if an element exists
+                let list = document.getElementById('expenses-listing');
+                if (!list) {
+                    const results = document.getElementById('calculator-results');
+                    if (results) {
+                        list = document.createElement('div');
+                        list.id = 'expenses-listing';
+                        list.className = 'card';
+                        list.style.marginTop = '12px';
+                        results.appendChild(list);
+                    }
+                }
+                if (list) {
+                    list.innerHTML = '<h4>Recent Expenses</h4>' +
+                        data.expenses.map(e => `<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--gray-200);padding:.5rem 0"><span>${e.description || 'No description'}</span><span>${data.currency}${parseFloat(e.amount).toFixed(2)}</span></div>`).join('');
+                }
+            })
+            .catch(() => {});
     }
 
     addExpenseField() {

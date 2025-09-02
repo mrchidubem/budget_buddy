@@ -354,3 +354,134 @@ def generate_financial_advice(income: float, expenses: float, savings: float,
 def budget_view(request):
     """Legacy budget view - redirects to new API"""
     return budget_api(request)
+
+
+# ----------------------------- JSON AUTH & DASHBOARD ------------------------
+@require_http_methods(["GET"])
+def auth_status_json(request: HttpRequest) -> JsonResponse:
+    if request.user.is_authenticated:
+        return JsonResponse({
+            'authenticated': True,
+            'user': {
+                'id': request.user.id,
+                'username': request.user.username,
+                'email': request.user.email,
+            }
+        })
+    return JsonResponse({'authenticated': False})
+
+
+@require_http_methods(["POST"])
+def signup_json(request: HttpRequest) -> JsonResponse:
+    try:
+        data = json.loads(request.body)
+        username = (data.get('username') or '').strip()
+        email = (data.get('email') or '').strip()
+        password = (data.get('password') or '').strip()
+        country_code = (data.get('country') or 'US').upper()
+        if not username or not email or not password:
+            return JsonResponse({'error': 'All fields are required.'}, status=400)
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({'error': 'Username already taken.'}, status=400)
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({'error': 'Email already registered.'}, status=400)
+        user = User.objects.create_user(username=username, email=email, password=password)
+        from .models import UserProfile, Budget
+        currency_map = {
+            'US': '$', 'GB': '£', 'EU': '€', 'NG': '₦', 'GH': '₵', 'KE': 'KSh', 'ZA': 'R', 'IN': '₹',
+        }
+        UserProfile.objects.create(user=user, country_code=country_code, currency_symbol=currency_map.get(country_code, '$'))
+        Budget.objects.get_or_create(user=user, defaults={'goal_amount': 0})
+        login(request, user)
+        return JsonResponse({'success': True, 'user': {'id': user.id, 'username': user.username}})
+    except Exception as e:
+        logger.error(f"Signup JSON error: {e}")
+        return JsonResponse({'error': 'Signup failed'}, status=500)
+
+
+@require_http_methods(["POST"])
+def login_json(request: HttpRequest) -> JsonResponse:
+    try:
+        data = json.loads(request.body)
+        username = (data.get('username') or '').strip()
+        password = (data.get('password') or '').strip()
+        user = authenticate(request, username=username, password=password)
+        if user is None:
+            return JsonResponse({'error': 'Invalid credentials.'}, status=401)
+        login(request, user)
+        return JsonResponse({'success': True, 'user': {'id': user.id, 'username': user.username}})
+    except Exception as e:
+        logger.error(f"Login JSON error: {e}")
+        return JsonResponse({'error': 'Login failed'}, status=500)
+
+
+@require_http_methods(["POST"])
+def logout_json(request: HttpRequest) -> JsonResponse:
+    logout(request)
+    return JsonResponse({'success': True})
+
+
+@require_http_methods(["GET"])
+def dashboard_json(request: HttpRequest) -> JsonResponse:
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+    from .models import Budget, Expense
+    budget = Budget.objects.filter(user=request.user).first()
+    total_spent = Expense.objects.filter(user=request.user).aggregate(total=Sum('amount'))['total'] or 0
+    goal = float(budget.goal_amount) if budget else 0.0
+    progress = float(total_spent) / goal * 100 if goal and goal > 0 else 0.0
+    if progress < 50:
+        status = "You're on track 🎯"
+    elif progress < 80:
+        status = "Caution ⚠️"
+    elif progress <= 100:
+        status = "Alert 🚨 Close to limit"
+    else:
+        status = "Over budget ❌"
+    expenses = list(Expense.objects.filter(user=request.user).values('id', 'amount', 'description', 'date'))
+    profile = getattr(request.user, 'profile', None)
+    currency = profile.currency_symbol if profile else '$'
+    return JsonResponse({
+        'user': {'id': request.user.id, 'username': request.user.username},
+        'goal': goal,
+        'total_spent': float(total_spent),
+        'progress': round(progress, 2),
+        'status': status,
+        'currency': currency,
+        'expenses': expenses,
+    })
+
+
+@require_http_methods(["POST"])
+def set_goal_json(request: HttpRequest) -> JsonResponse:
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+    from .models import Budget
+    try:
+        data = json.loads(request.body)
+        goal_amount = float(data.get('goal_amount', 0))
+        budget, _ = Budget.objects.get_or_create(user=request.user)
+        budget.goal_amount = goal_amount
+        budget.save()
+        return dashboard_json(request)
+    except Exception as e:
+        logger.error(f"set_goal_json error: {e}")
+        return JsonResponse({'error': 'Failed to set goal'}, status=400)
+
+
+@require_http_methods(["POST"])
+def add_expense_json(request: HttpRequest) -> JsonResponse:
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+    from .models import Expense
+    try:
+        data = json.loads(request.body)
+        amount = float(data.get('amount', 0))
+        description = (data.get('description') or '').strip()
+        if amount <= 0:
+            return JsonResponse({'error': 'Amount must be greater than 0'}, status=400)
+        Expense.objects.create(user=request.user, amount=amount, description=description)
+        return dashboard_json(request)
+    except Exception as e:
+        logger.error(f"add_expense_json error: {e}")
+        return JsonResponse({'error': 'Failed to add expense'}, status=400)
