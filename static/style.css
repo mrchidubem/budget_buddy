@@ -100,6 +100,7 @@ body {
     color: var(--gray-800);
     background-color: var(--white);
     overflow-x: hidden;
+    padding-top: 80px;
 }
 
 /* Typography */
@@ -1137,6 +1138,8 @@ p {
         gap: var(--spacing-3);
         padding: var(--spacing-4);
         border-bottom: 1px solid var(--gray-200);
+        z-index: 1001;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.06);
     }
     .nav-menu.active .nav-link,
     .nav-menu.active .nav-cta {

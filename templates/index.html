@@ -417,6 +417,11 @@
                     <button class="btn btn-outline" id="export-data">
                         <i class="fas fa-download"></i> Export Data
                     </button>
+                    {% if request.user.is_authenticated %}
+                    <button class="btn btn-outline" id="save-cloud">
+                        <i class="fas fa-cloud-upload-alt"></i> Save to Cloud
+                    </button>
+                    {% endif %}
                 </div>
             </div>
             <div class="footer-bottom">
@@ -436,6 +441,12 @@
         </div>
     </div>
 
+    <script>
+        window.BUDGET_BUDDY_USER = {
+            isAuthenticated: {{ request.user.is_authenticated|yesno:'true,false' }},
+            id: {% if request.user.is_authenticated %}{{ request.user.id }}{% else %}null{% endif %}
+        };
+    </script>
     <script src="{% static 'script.js' %}"></script>
 </body>
 </html>

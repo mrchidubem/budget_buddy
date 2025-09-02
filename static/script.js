@@ -211,6 +211,18 @@ class BudgetBuddy {
                 this.shareAdvice();
             });
         }
+
+        // Save to cloud
+        const saveCloudBtn = document.getElementById('save-cloud');
+        if (saveCloudBtn) {
+            saveCloudBtn.addEventListener('click', () => {
+                // attach user id when available
+                if (this.budgetData && window.BUDGET_BUDDY_USER && window.BUDGET_BUDDY_USER.isAuthenticated) {
+                    this.budgetData.user_id = window.BUDGET_BUDDY_USER.id;
+                }
+                this.saveBudgetToSupabase();
+            });
+        }
     }
 
     addExpenseField() {
@@ -964,7 +976,11 @@ class BudgetBuddy {
             this.showNotification('No budget data to save', 'warning');
             return;
         }
-        
+        // Ensure user id is included if authenticated
+        if (window.BUDGET_BUDDY_USER && window.BUDGET_BUDDY_USER.isAuthenticated) {
+            this.budgetData.user_id = window.BUDGET_BUDDY_USER.id;
+        }
+
         fetch('/budget/api/', {
             method: 'POST',
             headers: {
