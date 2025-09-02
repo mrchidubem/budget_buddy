@@ -192,13 +192,23 @@ def add_expense_view(request: HttpRequest) -> HttpResponse:
     from .models import Expense
     amount_raw = request.POST.get('amount', '0').strip()
     description = request.POST.get('description', '').strip()
+    date_str = request.POST.get('date', '').strip()
     try:
         amount = float(amount_raw)
     except ValueError:
         return redirect('home_page')
     if amount <= 0:
         return redirect('home_page')
-    Expense.objects.create(user=request.user, amount=amount, description=description)
+    # If date provided, parse; else auto_now_add will handle
+    if date_str:
+        try:
+            from datetime import datetime
+            parsed_date = datetime.fromisoformat(date_str).date()
+            Expense.objects.create(user=request.user, amount=amount, description=description, date=parsed_date)
+        except Exception:
+            Expense.objects.create(user=request.user, amount=amount, description=description)
+    else:
+        Expense.objects.create(user=request.user, amount=amount, description=description)
     return redirect('home_page')
 
 @ensure_csrf_cookie
@@ -471,6 +481,21 @@ def dashboard_json(request: HttpRequest) -> JsonResponse:
     })
 
 
+@require_http_methods(["POST"]) 
+def delete_expense_json(request: HttpRequest) -> JsonResponse:
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+    from .models import Expense
+    try:
+        data = json.loads(request.body)
+        expense_id = int(data.get('id'))
+        Expense.objects.filter(id=expense_id, user=request.user).delete()
+        return dashboard_json(request)
+    except Exception as e:
+        logger.error(f"delete_expense_json error: {e}")
+        return JsonResponse({'error': 'Failed to delete expense'}, status=400)
+
+
 @require_http_methods(["POST"])
 def set_goal_json(request: HttpRequest) -> JsonResponse:
     if not request.user.is_authenticated:
@@ -497,9 +522,18 @@ def add_expense_json(request: HttpRequest) -> JsonResponse:
         data = json.loads(request.body)
         amount = float(data.get('amount', 0))
         description = (data.get('description') or '').strip()
+        date_str = (data.get('date') or '').strip()
         if amount <= 0:
             return JsonResponse({'error': 'Amount must be greater than 0'}, status=400)
-        Expense.objects.create(user=request.user, amount=amount, description=description)
+        if date_str:
+            try:
+                from datetime import datetime
+                parsed_date = datetime.fromisoformat(date_str).date()
+                Expense.objects.create(user=request.user, amount=amount, description=description, date=parsed_date)
+            except Exception:
+                Expense.objects.create(user=request.user, amount=amount, description=description)
+        else:
+            Expense.objects.create(user=request.user, amount=amount, description=description)
         return dashboard_json(request)
     except Exception as e:
         logger.error(f"add_expense_json error: {e}")

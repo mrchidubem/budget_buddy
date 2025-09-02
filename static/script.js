@@ -276,7 +276,22 @@ class BudgetBuddy {
                 }
                 if (list) {
                     list.innerHTML = '<h4>Recent Expenses</h4>' +
-                        data.expenses.map(e => `<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--gray-200);padding:.5rem 0"><span>${e.description || 'No description'}</span><span>${data.currency}${parseFloat(e.amount).toFixed(2)}</span></div>`).join('');
+                        data.expenses.slice(0,10).map(e => `<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--gray-200);padding:.5rem 0"><span>${e.description || 'No description'}</span><div style="display:flex;gap:8px;align-items:center"><span>${data.currency}${parseFloat(e.amount).toFixed(2)}</span><button class="btn btn-outline btn-sm" data-del-id="${e.id}">Delete</button></div></div>`).join('');
+                    // wire delete buttons
+                    list.querySelectorAll('button[data-del-id]').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const id = parseInt(btn.getAttribute('data-del-id'));
+                            this.ensureCsrfToken().then(() => fetch('/budget/dashboard/delete-expense/', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCSRFToken() },
+                                body: JSON.stringify({ id })
+                            })).then(r => r.json()).then(data => {
+                                if (data.error) return this.showNotification(data.error, 'error');
+                                this.showNotification('Expense deleted', 'success');
+                                this.loadDashboard();
+                            }).catch(() => this.showNotification('Failed to delete expense', 'error'));
+                        });
+                    });
                 }
             })
             .catch(() => {});
@@ -375,13 +390,14 @@ class BudgetBuddy {
                 e.preventDefault();
                 const amount = parseFloat(expenseForm.querySelector('input[name="amount"]').value || '0');
                 const description = expenseForm.querySelector('input[name="description"]').value || '';
+                const date = (expenseForm.querySelector('input[name="date"]').value || '').trim();
                 this.ensureCsrfToken().then(() => fetch('/budget/dashboard/add-expense/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': this.getCSRFToken(),
                     },
-                    body: JSON.stringify({ amount, description }),
+                    body: JSON.stringify({ amount, description, date }),
                 })).then(r => r.json()).then(data => {
                     if (data.error) return this.showNotification(data.error, 'error');
                     this.showNotification('Expense added', 'success');
