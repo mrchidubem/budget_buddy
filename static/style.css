@@ -1012,6 +1012,41 @@ p {
     max-width: 300px;
 }
 
+/* Generic Card */
+.card {
+    background: var(--white);
+    padding: var(--spacing-6);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Home Page Layout */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-3);
+    flex-wrap: wrap;
+    margin: var(--spacing-6) 0;
+}
+
+.card-form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--spacing-3);
+}
+
+.card-form .form-input {
+    width: 100%;
+}
+
+.card-actions {
+    display: flex;
+    gap: var(--spacing-3);
+    flex-wrap: wrap;
+}
+
 .notification-toast.show {
     transform: translateX(0);
 }
