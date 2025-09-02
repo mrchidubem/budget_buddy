@@ -139,16 +139,23 @@ def logout_view(request: HttpRequest) -> HttpResponse:
 
 @login_required
 def home_view(request: HttpRequest) -> HttpResponse:
+    # Render the unified dashboard at index.html (home.html deprecated)
     from .models import Budget, Expense
     budget = Budget.objects.filter(user=request.user).first()
     total_spent = Expense.objects.filter(user=request.user).aggregate(total=Sum('amount'))['total'] or 0
     goal = budget.goal_amount if budget else 0
-    # Progress and status
     progress = float(total_spent) / float(goal) * 100 if goal and goal > 0 else 0.0
-    status = "You're on track 🎯" if progress < 50 else ("Caution ⚠️, watch your spending" if progress < 80 else ("Alert 🚨 You are close to your budget limit!" if progress <= 100 else "Over budget ❌"))
+    if progress < 50:
+        status = "You're on track 🎯"
+    elif progress < 80:
+        status = "Caution ⚠️, watch your spending"
+    elif progress <= 100:
+        status = "Alert 🚨 You are close to your budget limit!"
+    else:
+        status = "Over budget ❌"
     profile = getattr(request.user, 'profile', None)
     currency = profile.currency_symbol if profile else '$'
-    return render(request, 'home.html', {
+    return render(request, 'index.html', {
         'username': request.user.username,
         'total_spent': total_spent,
         'goal': goal,
