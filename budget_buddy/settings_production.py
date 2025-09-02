@@ -8,11 +8,14 @@ from .settings import *
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-8w11s$_ywb=2lb^4db9kz-8%b__)+qtrsgok$)vjobi3lwmb$1')
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # Production hosts
-ALLOWED_HOSTS = [
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else [
     'budget-buddy-vibe-coding.onrender.com',  # Your actual Render domain
     '.onrender.com',
     'localhost',
@@ -66,8 +69,8 @@ else:
 
 # Supabase Configuration from environment variables
 SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://hyxhxyvgqhljahfkwiwu.supabase.co')
-SUPABASE_ANON_KEY = os.environ.get('SUPABASE_ANON_KEY', '')
-SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', '')
+SUPABASE_ANON_KEY = os.environ.get('SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eGh4eXZncWhsamFoZmt3aXd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2OTQxMTIsImV4cCI6MjA3MjI3MDExMn0.RN23AzV2SlWuxfbbQq2wkb1sramB_IvnAo1GjWoEmGo')
+SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eGh4eXZncWhsamFoZmt3aXd1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY5NDExMiwiZXhwIjoyMDcyMjcwMTEyfQ.tiz9alvSp5lXK6yrn0k_kJU6zrM1c52jOc49QOYjIMA')
 
 # Logging for production
 LOGGING = {
@@ -87,7 +90,23 @@ LOGGING = {
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = [
     "https://budget-buddy-vibe-coding.onrender.com",  # Your actual domain
-    "https://*.onrender.com",
+    "https://hyxhxyvgqhljahfkwiwu.supabase.co",
+]
+
+# Allow credentials
+CORS_ALLOW_CREDENTIALS = True
+
+# Allow specific headers
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 # HTTPS settings (comment out for local testing)

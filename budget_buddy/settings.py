@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8w11s$_ywb=2lb^4db9kz-8%b__)+qtrsgok$)vjobi3lwmb$1'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-8w11s$_ywb=2lb^4db9kz-8%b__)+qtrsgok$)vjobi3lwmb$1')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else []
 
 
 # Application definition
@@ -38,10 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',  # Add CORS support for Supabase
     'budget' ,
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Add CORS middleware at the top
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # Add WhiteNoise for static files
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -124,12 +126,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'templates')]
+
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+# WhiteNoise configuration
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Supabase Configuration
-SUPABASE_URL = 'https://hyxhxyvgqhljahfkwiwu.supabase.co'
-SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eGh4eXZncWhsamFoZmt3aXd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2OTQxMTIsImV4cCI6MjA3MjI3MDExMn0.RN23AzV2SlWuxfbbQq2wkb1sramB_IvnAo1GjWoEmGo'
+SUPABASE_URL = os.environ.get('SUPABASE_URL', 'https://hyxhxyvgqhljahfkwiwu.supabase.co')
+SUPABASE_ANON_KEY = os.environ.get('SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eGh4eXZncWhsamFoZmt3aXd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2OTQxMTIsImV4cCI6MjA3MjI3MDExMn0.RN23AzV2SlWuxfbbQq2wkb1sramB_IvnAo1GjWoEmGo')
 SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eGh4eXZncWhsamFoZmt3aXd1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY5NDExMiwiZXhwIjoyMDcyMjcwMTEyfQ.tiz9alvSp5lXK6yrn0k_kJU6zrM1c52jOc49QOYjIMA')
 
 # Security Settings
@@ -137,8 +145,15 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
-# CORS Settings (if needed for Supabase)
+# CORS Settings for Supabase
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "https://hyxhxyvgqhljahfkwiwu.supabase.co",
 ]
+
+# Allow all origins for development (remove in production)
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Allow credentials
+CORS_ALLOW_CREDENTIALS = True
