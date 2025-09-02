@@ -285,8 +285,8 @@ class BudgetBuddy {
         // Collect form data
         const formData = this.collectFormData();
         
-        // Send to Django backend
-        fetch('/budget/api/', {
+        // Send to Django backend (ensure CSRF cookie exists first)
+        this.ensureCsrfToken().then(() => fetch('/budget/api/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -296,7 +296,7 @@ class BudgetBuddy {
                 action: 'calculate',
                 ...formData
             })
-        })
+        }))
         .then(response => response.json())
         .then(data => {
             if (data.error) {
@@ -981,7 +981,7 @@ class BudgetBuddy {
             this.budgetData.user_id = window.BUDGET_BUDDY_USER.id;
         }
 
-        fetch('/budget/api/', {
+        this.ensureCsrfToken().then(() => fetch('/budget/api/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -991,7 +991,7 @@ class BudgetBuddy {
                 action: 'save',
                 ...this.budgetData
             })
-        })
+        }))
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -1015,6 +1015,12 @@ class BudgetBuddy {
             }
         }
         return '';
+    }
+
+    ensureCsrfToken() {
+        const token = this.getCSRFToken();
+        if (token) return Promise.resolve(token);
+        return fetch('/budget/api/', { credentials: 'same-origin' }).then(() => this.getCSRFToken());
     }
 
     animateOnScroll() {
