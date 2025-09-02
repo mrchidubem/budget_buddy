@@ -235,6 +235,8 @@ class BudgetBuddy {
                 if (data.authenticated) {
                     window.BUDGET_BUDDY_USER = { isAuthenticated: true, id: data.user.id };
                     this.loadDashboard();
+                    this.showLogoutButton();
+                    this.hideAuthCard();
                 }
             })
             .catch(() => {});
@@ -278,6 +280,26 @@ class BudgetBuddy {
                 }
             })
             .catch(() => {});
+    }
+
+    hideAuthCard() {
+        const authCard = document.getElementById('auth-card');
+        if (authCard) authCard.style.display = 'none';
+    }
+
+    showLogoutButton() {
+        const logoutBtn = document.getElementById('spa-logout');
+        if (!logoutBtn) return;
+        logoutBtn.style.display = 'inline-flex';
+        logoutBtn.onclick = () => {
+            this.ensureCsrfToken().then(() => fetch('/budget/auth/logout/', {
+                method: 'POST',
+                headers: { 'X-CSRFToken': this.getCSRFToken() },
+            })).then(() => {
+                window.BUDGET_BUDDY_USER = { isAuthenticated: false };
+                location.reload();
+            }).catch(() => this.showNotification('Logout failed', 'error'));
+        };
     }
 
     setupSpaAuth() {

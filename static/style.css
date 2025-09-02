@@ -1043,9 +1043,18 @@ p {
 }
 
 .card-actions {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 2fr auto;
     gap: var(--spacing-3);
-    flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+    .card-actions {
+        grid-template-columns: 1fr;
+    }
+    .card-form {
+        grid-template-columns: 1fr;
+    }
 }
 
 .notification-toast.show {
