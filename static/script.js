@@ -16,8 +16,18 @@ class BudgetBuddy {
         this.animateOnScroll();
         this.initializeChart();
         this.loadSavedData();
+        this.bootstrapUserFromDom();
         this.refreshDashboardIfLoggedIn();
         this.setupSpaAuth();
+    }
+
+    bootstrapUserFromDom() {
+        const el = document.getElementById('bb-user');
+        if (!el) return;
+        const isAuth = el.getAttribute('data-auth') === 'true';
+        const idAttr = el.getAttribute('data-id');
+        const id = idAttr ? Number(idAttr) : null;
+        window.BUDGET_BUDDY_USER = { isAuthenticated: isAuth, id };
     }
 
     setupEventListeners() {

@@ -475,12 +475,7 @@
         </div>
     </div>
 
-    <script>
-        window.BUDGET_BUDDY_USER = {
-            isAuthenticated: {{ request.user.is_authenticated|yesno:'true,false' }},
-            id: {% if request.user.is_authenticated %}{{ request.user.id }}{% else %}null{% endif %}
-        };
-    </script>
+    <div id="bb-user" data-auth="{% if request.user.is_authenticated %}true{% else %}false{% endif %}" data-id="{% if request.user.is_authenticated %}{{ request.user.id }}{% endif %}" style="display:none"></div>
     <script src="{% static 'script.js' %}"></script>
 </body>
 </html>
