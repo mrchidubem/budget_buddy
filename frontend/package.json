@@ -1,0 +1,1 @@
+{"name":"budget-buddy-frontend","version":"1.0.0","private":true,"scripts":{"dev":"vite","build":"vite build","serve":"vite preview"},"dependencies":{"react":"^17.0.0","react-dom":"^17.0.0"},"devDependencies":{"vite":"^2.0.0","tailwindcss":"^2.0.0","postcss":"^8.0.0","autoprefixer":"^10.0.0"}}
