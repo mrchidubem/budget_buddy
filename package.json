@@ -1,0 +1,1 @@
+{\n  "name": "budget_buddy",\n  "private": true,\n  "workspaces": [\n    "backend",\n    "frontend"\n  ],\n  "scripts": {\n    "install": "lerna bootstrap",\n    "start": "lerna run start"\n  }\n}
