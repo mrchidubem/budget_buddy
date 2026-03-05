@@ -1,0 +1,45 @@
+
+> client@1.0.0 dev
+> vite --host --port 5173
+
+Port 5173 is in use, trying another one...
+
+  [32m[1mVITE[22m v7.3.1[39m  [2mready in [0m[1m1183[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5174[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.56.1:[1m5174[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://10.138.3.138:[1m5174[22m/[39m
+[2m19:25:21[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m19:28:58[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m19:53:55[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/context/AuthContext.jsx, /src/context/BudgetContext.jsx, /src/styles/index.css[22m
+[2m19:54:11[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/context/AuthContext.jsx, /src/styles/index.css[22m
+[2m19:54:39[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/context/AuthContext.jsx, /src/styles/index.css[22m
+[2m19:55:11[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/context/AuthContext.jsx, /src/styles/index.css[22m
+[2m19:55:20[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/utils/constants.js[22m
+[2m19:55:31[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/components/dashboard/Summary.jsx, /src/components/transaction/TransactionList.jsx, /src/components/budget/BudgetStats.jsx, /src/components/budget/BudgetCard.jsx, /src/components/transaction/TransactionItem.jsx, /src/styles/index.css[22m
+[2m19:55:54[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/components/dashboard/Summary.jsx, /src/components/transaction/TransactionList.jsx, /src/components/budget/BudgetStats.jsx, /src/components/budget/BudgetCard.jsx, /src/components/transaction/TransactionItem.jsx, /src/styles/index.css[22m
+[2m19:56:04[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/budget/BudgetStats.jsx, /src/styles/index.css[22m
+[2m19:56:14[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/budget/BudgetCard.jsx, /src/styles/index.css[22m
+[2m19:56:26[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/dashboard/Summary.jsx, /src/styles/index.css[22m
+[2m19:56:32[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/transaction/TransactionItem.jsx, /src/styles/index.css[22m
+[2m19:56:39[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/budget/BudgetForm.jsx, /src/styles/index.css[22m
+[2m19:56:45[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/transaction/TransactionForm.jsx, /src/styles/index.css[22m
+[2m19:57:00[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m19:57:16[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m19:57:34[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/common/Header.jsx, /src/styles/index.css[22m
+[2m19:57:45[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/auth/RegisterForm.jsx, /src/styles/index.css[22m
+[2m20:06:26[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m20:06:34[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m20:07:06[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m20:07:23[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m20:07:30[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m20:07:35[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m20:07:42[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m20:14:25[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/context/AuthContext.jsx, /src/styles/index.css[22m
+[2m20:14:32[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/pages/DashboardPage.jsx, /src/styles/index.css[22m
+[2m20:16:12[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/services/authService.js[22m
+[2m20:16:23[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/context/AuthContext.jsx, /src/styles/index.css[22m
+[2m20:16:30[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/services/api.js[22m
+[2m20:19:29[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mpage reload [39m[2msrc/services/api.js[22m
+[2m20:20:57[22m [36m[1m[vite][22m[39m [32mvite.config.js changed, restarting server...[39m
+[2m20:20:57[22m [36m[1m[vite][22m[39m server restarted.

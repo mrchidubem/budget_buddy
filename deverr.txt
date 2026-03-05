@@ -1,0 +1,5 @@
+(node:16120) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/dubicventures/budget_buddy/client/tailwind.config.js?id=1772733584588 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\dubicventures\budget_buddy\client\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+^C
