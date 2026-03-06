@@ -26,9 +26,11 @@ dotenv.config();
 
 const app = express();
 
+// Security & Logging
 app.use(helmet());
 app.use(morgan('combined'));
 
+// CORS configuration
 const defaultCorsOrigins = [
   'http://localhost:3000',
   'http://127.0.0.1:3000',
@@ -75,18 +77,35 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
+/**
+ * Root route for frontend or health check
+ */
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Budget Buddy API is running',
+    environment: process.env.NODE_ENV || 'development',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+/**
+ * Health check route (for monitoring)
+ */
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
-    message: 'Server is running',
+    message: 'Server is healthy',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
   });
 });
 
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/transactions', transactionRoutes);
@@ -95,9 +114,11 @@ app.use('/api/goals', goalRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/alerts', alertRoutes);
 
+// 404 & error handling
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+// Start server
 const startServer = async () => {
   try {
     await connectDatabase();
@@ -111,6 +132,7 @@ const startServer = async () => {
       });
     });
 
+    // Graceful shutdown
     process.on('SIGTERM', () => {
       logger.info('SIGTERM signal received: closing HTTP server');
       server.close(() => {
