@@ -15,8 +15,8 @@ const BudgetList = ({ budgets, loading, onEdit, onDelete, onSelectTransaction })
   if (budgets.length === 0) {
     return (
       <div className="bb-panel p-8 text-center">
-        <p className="text-sm font-medium text-[#10201b]">No budgets yet</p>
-        <p className="text-xs text-[#64716d] mt-1">Create a category to start tracking.</p>
+        <p className="text-sm font-medium text-white">No budgets yet</p>
+        <p className="text-xs text-[#9aa8a1] mt-1">Create a category to start tracking.</p>
       </div>
     );
   }
@@ -28,7 +28,7 @@ const BudgetList = ({ budgets, loading, onEdit, onDelete, onSelectTransaction })
           <h2 className="bb-section-title">Budget categories</h2>
           <p className="bb-section-subtitle">Active limits, utilization, and quick actions.</p>
         </div>
-        <span className="text-xs font-semibold text-[#42524d] bg-white border border-[#e3e9e5] rounded-[6px] px-2.5 py-1 shadow-sm">
+        <span className="text-xs font-semibold text-[#071b16] bg-[#9cff6d] rounded-[6px] px-2.5 py-1 shadow-sm">
           {budgets.length} total
         </span>
       </div>

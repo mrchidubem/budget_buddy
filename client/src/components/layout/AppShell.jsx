@@ -19,7 +19,7 @@ const AppShell = ({ children, mobileTitle = 'Budget Buddy', mobileSubtitle }) =>
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         {mobileTitle && (
-          <header className="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur shadow-[0_1px_18px_rgba(7,27,22,0.06)] px-4 py-3">
+          <header className="lg:hidden sticky top-0 z-40 bg-[#101513]/95 backdrop-blur shadow-[0_1px_22px_rgba(0,0,0,0.24)] px-4 py-3">
             <h1 className="bb-page-title truncate">{mobileTitle}</h1>
             {mobileSubtitle && <p className="bb-page-sub truncate">{mobileSubtitle}</p>}
           </header>

@@ -9,11 +9,11 @@ import { formatDate } from '../../utils/helpers.js';
 
 const TransactionList = ({ transactions, loading, onEdit, onDelete }) => {
   if (loading) {
-    return <p className="px-4 py-8 text-sm text-[#64716d] text-center">Loading...</p>;
+    return <p className="px-4 py-8 text-sm text-[#9aa8a1] text-center">Loading...</p>;
   }
 
   if (transactions.length === 0) {
-    return <p className="px-4 py-8 text-sm text-[#64716d] text-center">No transactions.</p>;
+    return <p className="px-4 py-8 text-sm text-[#9aa8a1] text-center">No transactions.</p>;
   }
 
   const grouped = transactions.reduce((acc, tx) => {
@@ -27,7 +27,7 @@ const TransactionList = ({ transactions, loading, onEdit, onDelete }) => {
     <div>
       {Object.entries(grouped).map(([date, txns]) => (
         <div key={date}>
-          <p className="px-4 py-2 text-xs font-semibold text-[#64716d] bg-[#f8faf6]">
+          <p className="px-4 py-2 text-xs font-semibold text-[#9aa8a1] bg-white/[0.04]">
             {date}
           </p>
           {txns.map((transaction) => (

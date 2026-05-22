@@ -835,7 +835,7 @@ const DashboardPage = () => {
         <section className="bb-hero-strip">
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-end">
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase text-[#d7f86f]">
+              <p className="text-xs font-semibold uppercase text-[#9cff6d]">
                 {operatingStatus}
               </p>
               <h2 className="mt-2 text-2xl font-semibold leading-tight lg:text-3xl">
@@ -846,7 +846,7 @@ const DashboardPage = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 lg:gap-3">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:gap-3">
               <div className="rounded-[8px] bg-white/8 p-3 ring-1 ring-white/10">
                 <span className="bb-hero-metric-label">Today</span>
                 <span className="bb-hero-metric-value mt-1 block">{formatAmount(todayExpenseTotal)}</span>
@@ -855,7 +855,7 @@ const DashboardPage = () => {
                 <span className="bb-hero-metric-label">Used</span>
                 <span className="bb-hero-metric-value mt-1 block">{formatAmount(totalBudgetSpent)}</span>
               </div>
-              <div className="rounded-[8px] bg-[#d7f86f] p-3 text-[#071b16]">
+              <div className="rounded-[8px] bg-[#9cff6d] p-3 text-[#071b16]">
                 <span className="text-[11px] font-semibold text-[#405229]">Health</span>
                 <span className="mt-1 block text-lg font-semibold tabular-nums">{financialHealthScore}</span>
               </div>
@@ -866,7 +866,7 @@ const DashboardPage = () => {
         {/* Mobile: horizontal chips */}
         <div className="bb-metric-scroll">
           <div className="bb-metric-chip">
-            <p className="text-xs text-[#64716d]">Daily cap</p>
+            <p className="text-xs text-[#9aa8a1]">Daily cap</p>
             <p className="text-base font-semibold tabular-nums mt-0.5">{formatAmount(dailyBudgetTarget)}</p>
           </div>
           <div className="bb-metric-chip">
@@ -891,7 +891,7 @@ const DashboardPage = () => {
           <div className="bb-metric-cell">
             <p className="bb-metric-cell-label">Month pace</p>
             <p className="bb-metric-cell-value">{spendPacePercent}%</p>
-            <p className="mt-1 text-xs text-[#64716d]">{paceLabel}</p>
+            <p className="mt-1 text-xs text-[#9aa8a1]">{paceLabel}</p>
           </div>
           <div className="bb-metric-cell">
             <p className="bb-metric-cell-label">Health score</p>
@@ -923,10 +923,10 @@ const DashboardPage = () => {
           <LoadingSpinner fullScreen={false} message="Loading your dashboard..." />
         ) : budgets.length === 0 ? (
           <div className="bb-premium-card p-10 text-center">
-            <p className="text-sm font-medium text-[#10201b]">
+            <p className="text-sm font-medium text-white">
               {hasCreatedBudgetBefore ? 'No active budgets' : 'Get started'}
             </p>
-              <p className="text-xs text-[#64716d] mt-2 max-w-sm mx-auto">
+              <p className="text-xs text-[#9aa8a1] mt-2 max-w-sm mx-auto">
               Create your first category budget to track spending.
             </p>
             <button
@@ -959,14 +959,14 @@ const DashboardPage = () => {
               </button>
             </div>
 
-            <div className="hidden lg:inline-flex w-fit gap-1 rounded-[8px] bg-[#e4ebe5] p-1">
+            <div className="hidden lg:inline-flex w-fit gap-1 rounded-[8px] bg-white/8 p-1 ring-1 ring-white/10">
               <button
                 type="button"
                 onClick={() => setActiveTab('overview')}
                 className={`rounded-[6px] px-4 py-2 text-sm font-semibold ${
                   activeTab === 'overview'
-                    ? 'bg-white text-[#10201b] shadow-sm'
-                    : 'text-[#64716d]'
+                    ? 'bg-[#9cff6d] text-[#071b16] shadow-sm'
+                    : 'text-[#9aa8a1]'
                 }`}
               >
                 Overview
@@ -976,8 +976,8 @@ const DashboardPage = () => {
                 onClick={() => setActiveTab('transactions')}
                 className={`rounded-[6px] px-4 py-2 text-sm font-semibold ${
                   activeTab === 'transactions'
-                    ? 'bg-white text-[#10201b] shadow-sm'
-                    : 'text-[#64716d]'
+                    ? 'bg-[#9cff6d] text-[#071b16] shadow-sm'
+                    : 'text-[#9aa8a1]'
                 }`}
               >
                 Transactions
@@ -1001,7 +1001,7 @@ const DashboardPage = () => {
                       <h2 className="bb-section-title">Activity stream</h2>
                       <p className="bb-section-subtitle">Latest movement across budgets.</p>
                     </div>
-                    <span className="rounded-[6px] bg-[#edf5ef] px-2.5 py-1 text-xs font-semibold text-[#07885b]">
+                    <span className="rounded-[6px] bg-[#9cff6d] px-2.5 py-1 text-xs font-semibold text-[#071b16]">
                       Live
                     </span>
                   </div>
@@ -1017,7 +1017,7 @@ const DashboardPage = () => {
             {activeTab === 'transactions' && (
               <div className="space-y-4">
                 <section className="bb-premium-card p-4 space-y-3">
-                  <p className="text-sm text-[#42524d]">
+                  <p className="text-sm text-[#b8c9c1]">
                     Filter: <strong>{selectedBudget?.category || 'All categories'}</strong>
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">

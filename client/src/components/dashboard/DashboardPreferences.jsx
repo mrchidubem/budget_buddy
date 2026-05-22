@@ -27,7 +27,7 @@ const DashboardPreferences = ({
     <details className="bb-panel group">
       <summary className="bb-panel-head cursor-pointer list-none flex items-center justify-between [&::-webkit-details-marker]:hidden">
         <span className="bb-panel-title">Settings & alerts</span>
-        <span className="text-xs font-medium text-[#64716d] group-open:hidden">
+        <span className="text-xs font-medium text-[#9aa8a1] group-open:hidden">
           Expand
         </span>
       </summary>
@@ -52,13 +52,13 @@ const DashboardPreferences = ({
             </select>
           </div>
           <div className="flex items-end">
-            <label className="flex items-center gap-2 text-sm font-medium text-[#42524d]">
+            <label className="flex items-center gap-2 text-sm font-medium text-[#b8c9c1]">
               <input
                 type="checkbox"
                 checked={Boolean(alertPreferences?.emailEnabled)}
                 onChange={onEmailToggle}
                 disabled={isUpdatingPreferences}
-                className="rounded border-[#c8d4ce] text-[#00a86b]"
+                className="rounded border-white/20 bg-white/5 text-[#9cff6d]"
               />
               Email alerts
             </label>
