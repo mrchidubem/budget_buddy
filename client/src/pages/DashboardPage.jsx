@@ -5,22 +5,21 @@ import React from 'react';
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Header from '../components/common/Header.jsx';
-import BudgetStats from '../components/budget/BudgetStats.jsx';
+import AppShell from '../components/layout/AppShell.jsx';
+import ActivityFeed from '../components/dashboard/ActivityFeed.jsx';
+import DashboardPreferences from '../components/dashboard/DashboardPreferences.jsx';
 import BudgetList from '../components/budget/BudgetList.jsx';
 import BudgetForm from '../components/budget/BudgetForm.jsx';
 import TransactionForm from '../components/transaction/TransactionForm.jsx';
 import TransactionList from '../components/transaction/TransactionList.jsx';
 import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
-import Summary from '../components/dashboard/Summary.jsx';
-import Footer from '../components/common/Footer.jsx';
 import { useBudget } from '../hooks/useBudget.js';
 import { useNotification } from '../hooks/useNotification.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { useCurrency } from '../hooks/useCurrency.js';
 import * as activityService from '../services/activityService.js';
 import * as alertService from '../services/alertService.js';
-import { STORAGE_KEYS, SUPPORTED_CURRENCIES } from '../utils/constants.js';
+import { STORAGE_KEYS } from '../utils/constants.js';
 import {
   calculatePercentage,
   formatDate,
@@ -36,20 +35,6 @@ const buildActionLabel = (action = '') => {
     .replace(/\./g, ' ')
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (char) => char.toUpperCase());
-};
-
-const getActionTone = (action = '') => {
-  const normalized = action.toLowerCase();
-  if (normalized.includes('delete') || normalized.includes('logout')) {
-    return 'bg-red-50 text-red-700 border-red-200';
-  }
-  if (normalized.includes('create') || normalized.includes('register')) {
-    return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-  }
-  if (normalized.includes('update')) {
-    return 'bg-amber-50 text-amber-800 border-amber-200';
-  }
-  return 'bg-slate-100 text-slate-700 border-slate-200';
 };
 
 const DashboardPage = () => {
@@ -779,13 +764,6 @@ const DashboardPage = () => {
         ? 'Below projected pace'
         : 'On expected pace';
 
-  const paceTone =
-    spendPacePercent > 110
-      ? 'text-danger-700'
-      : spendPacePercent < 90
-        ? 'text-emerald-700'
-        : 'text-slate-700';
-
   const operatingStatus =
     isDailyOver || isProjectedOverBudget
       ? 'At risk'
@@ -815,396 +793,191 @@ const DashboardPage = () => {
             )} and maintain your month-end projection.`;
 
   return (
-    <div className="min-h-screen">
-      <Header />
-
-      <main className="bb-page-shell space-y-8">
-        <section className="relative overflow-hidden rounded-2xl border border-slate-700 bg-[linear-gradient(140deg,_#0b1220_0%,_#111827_58%,_#1f2937_100%)] text-slate-100 shadow-xl">
-          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_8%_0%,_#22c55e_0,_transparent_25%),radial-gradient(circle_at_95%_10%,_#38bdf8_0,_transparent_22%)]" />
-          <div className="absolute inset-0 opacity-[0.12] bb-grid-bg" />
-          <div className="relative px-6 py-6 sm:px-8 md:px-10 md:py-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            <div className="max-w-2xl">
-              <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Performance Desk
-              </p>
-              <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">
-                {firstName
-                  ? `${firstName}, financial command view`
-                  : 'Financial command view'}
-              </h1>
-              <p className="mt-3 text-sm text-slate-300 max-w-xl">
-                Position, pace, and risk signals in one view.
-              </p>
-
-              <div className="mt-5 flex flex-wrap gap-2.5 text-[11px]">
-                <span className="bb-pill bg-white/10 text-slate-100 border border-white/15">
-                  Sync: {formatTime(lastSyncedAt)}
-                </span>
-                <span className="bb-pill bg-white/10 text-slate-100 border border-white/15">
-                  Alerts:{' '}
-                  {browserSupported
-                    ? browserPermission === 'granted'
-                      ? 'on'
-                      : 'off'
-                    : 'unsupported'}
-                </span>
-                <span className="bb-pill bg-white/10 text-slate-100 border border-white/15">
-                  TZ: {Intl.DateTimeFormat().resolvedOptions().timeZone}
-                </span>
-                <span className="bb-pill bg-white/10 text-slate-100 border border-white/15">
-                  Currency: {currency}
-                </span>
-              </div>
-            </div>
-
-            <div className="w-full lg:w-auto lg:min-w-[290px] space-y-3">
-              <div className="rounded-xl bg-white/8 border border-white/15 text-slate-100 p-4 shadow-md">
-                <p className="text-[11px] uppercase tracking-[0.16em] text-slate-400">
-                  Live Time
-                </p>
-                <p className="mt-1 text-3xl font-extrabold leading-none">
-                  {formatTime(now)}
-                </p>
-                <p className="mt-1 text-xs text-slate-300">{formatDate(now, 'full')}</p>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => {
-                    setEditingBudget(null);
-                    setShowBudgetForm(true);
-                  }}
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-white text-slate-900 text-xs sm:text-sm font-semibold hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2 focus:ring-offset-slate-900/0 transition"
-                >
-                  New Plan
-                </button>
-
-                {selectedBudget && (
-                  <button
-                    onClick={() => {
-                      setEditingTransaction(null);
-                      setShowTransactionForm(true);
-                    }}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-white/30 bg-white/10 text-xs sm:text-sm font-semibold text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-slate-300 focus:ring-offset-2 focus:ring-offset-slate-900/0 transition"
-                  >
-                    New Entry
-                  </button>
-                )}
-
-                {browserSupported && browserPermission !== 'granted' && (
-                  <button
-                    onClick={handleEnableDesktopAlerts}
-                    disabled={isRequestingDesktopAlerts}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-amber-300/60 bg-amber-400/10 text-xs sm:text-sm font-semibold text-amber-100 hover:bg-amber-400/20 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-slate-900/0 transition disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {isRequestingDesktopAlerts ? 'Enabling...' : 'Enable Alerts'}
-                  </button>
-                )}
-              </div>
-            </div>
+    <AppShell
+      mobileTitle={firstName ? `Hi, ${firstName}` : 'Overview'}
+      mobileSubtitle={`Synced ${formatTime(lastSyncedAt)}`}
+    >
+      <div className="space-y-5 lg:space-y-6">
+        {/* Desktop title row */}
+        <div className="hidden lg:flex lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="bb-page-title">Overview</h1>
+            <p className="bb-page-sub">
+              {formatDate(now, 'full')} / {currency} / {operatingStatus}
+            </p>
           </div>
-        </section>
-
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <article className="bb-surface rounded-2xl p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Currency
-            </p>
-            <select
-              value={currency}
-              onChange={handleCurrencyQuickChange}
-              disabled={isUpdatingPreferences}
-              className="mt-3 w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300 outline-none text-sm bg-white disabled:opacity-60"
-            >
-              {SUPPORTED_CURRENCIES.map((currencyOption) => (
-                <option key={currencyOption.code} value={currencyOption.code}>
-                  {currencyOption.label}
-                </option>
-              ))}
-            </select>
-            <p className="mt-2 text-xs text-slate-500">
-              This controls how all amounts are displayed across pages.
-            </p>
-          </article>
-
-          <article className="bb-surface rounded-2xl p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Alert Channels
-            </p>
-            <p className="mt-2 text-sm text-slate-700">
-              In-app alerts are active. Desktop alerts depend on browser permission.
-            </p>
-            <label className="mt-3 inline-flex items-center gap-2 text-sm text-slate-800">
-              <input
-                type="checkbox"
-                checked={Boolean(alertPreferences?.emailEnabled)}
-                onChange={handleEmailAlertsToggle}
-                disabled={isUpdatingPreferences}
-                className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-emerald-300"
-              />
-              Enable email alerts
-            </label>
+          <div className="flex gap-2">
             <button
               type="button"
-              onClick={handleSendTestEmail}
-              disabled={!alertPreferences?.emailEnabled || isSendingEmailTest}
-              className="mt-3 px-3 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSendingEmailTest ? 'Sending test...' : 'Send test email'}
-            </button>
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <label className="text-xs font-semibold text-slate-600">
-                Daily cap alert (%)
-                <input
-                  type="number"
-                  min="50"
-                  max="100"
-                  value={alertThresholdDraft.dailyThresholdPercent}
-                  onChange={handleAlertThresholdDraftChange(
-                    'dailyThresholdPercent'
-                  )}
-                  className="mt-1 w-full px-2.5 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300 outline-none"
-                />
-              </label>
-              <label className="text-xs font-semibold text-slate-600">
-                Budget alert (%)
-                <input
-                  type="number"
-                  min="50"
-                  max="100"
-                  value={alertThresholdDraft.budgetThresholdPercent}
-                  onChange={handleAlertThresholdDraftChange(
-                    'budgetThresholdPercent'
-                  )}
-                  className="mt-1 w-full px-2.5 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300 outline-none"
-                />
-              </label>
-            </div>
-            <button
-              type="button"
-              onClick={handleSaveAlertThresholds}
-              disabled={!thresholdDraftDirty || isUpdatingPreferences}
-              className="mt-3 px-3 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Save alert thresholds
-            </button>
-            <p className="mt-2 text-[11px] text-slate-500">
-              Email alerts are currently simulated in server logs in this build.
-            </p>
-          </article>
-
-          <article className="bb-surface rounded-2xl p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Action Guide
-            </p>
-            <p className="mt-2 text-sm text-slate-700">
-              Status:{' '}
-              <span className="font-bold text-slate-900">{operatingStatus}</span>
-            </p>
-            <p className="mt-2 text-sm text-slate-700">{nextMove}</p>
-          </article>
-        </section>
-
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <article className="bb-surface rounded-2xl p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Daily Spending Cap
-            </p>
-            <p className="mt-2 text-2xl font-extrabold text-slate-900">
-              {formatAmount(dailyBudgetTarget)}
-            </p>
-            <p className="mt-1 text-xs text-slate-500">
-              Suggested maximum to spend today. This is a spending target, not a savings goal.
-            </p>
-          </article>
-
-          <article className="bb-surface rounded-2xl p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Today's Spend
-            </p>
-            <p
-              className={`mt-2 text-2xl font-extrabold ${
-                isDailyOver
-                  ? 'text-danger-700'
-                  : isDailyNear
-                    ? 'text-warning-700'
-                    : 'text-slate-900'
-              }`}
-            >
-              {formatAmount(todayExpenseTotal)}
-            </p>
-            <div className="mt-2 h-2 rounded-full bg-slate-200 overflow-hidden">
-              <div
-                className={`h-full ${
-                  isDailyOver
-                    ? 'bg-danger-500'
-                    : isDailyNear
-                      ? 'bg-warning-500'
-                      : 'bg-emerald-500'
-                }`}
-                style={{ width: `${Math.min(dailySpendPercent, 100)}%` }}
-              />
-            </div>
-            <p className="mt-1 text-xs text-slate-500">
-              {isDailyOver
-                ? `Over target by ${formatAmount(
-                    todayExpenseTotal - dailyBudgetTarget
-                  )}`
-                : `${dailySpendPercent}% used, ${formatAmount(
-                    dailyRemaining
-                  )} remaining`}
-            </p>
-          </article>
-
-          <article className="bb-surface rounded-2xl p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Month Pace
-            </p>
-            <p className={`mt-2 text-2xl font-extrabold ${paceTone}`}>
-              {spendPacePercent}%
-            </p>
-            <p className="mt-1 text-xs text-slate-500">{paceLabel}</p>
-            <p className="mt-2 text-xs text-slate-500">
-              Current month spend: {formatAmount(currentMonthExpenseTotal)}
-            </p>
-          </article>
-        </section>
-
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <article className="bb-surface rounded-2xl p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Financial Health Score
-            </p>
-            <p className="mt-2 text-3xl font-extrabold text-slate-900">
-              {financialHealthScore}
-              <span className="text-sm font-semibold text-slate-500"> / 100</span>
-            </p>
-            <div className="mt-3 h-2 rounded-full bg-slate-200 overflow-hidden">
-              <div
-                className={`h-full ${
-                  financialHealthScore >= 80
-                    ? 'bg-emerald-500'
-                    : financialHealthScore >= 60
-                      ? 'bg-amber-500'
-                      : 'bg-danger-500'
-                }`}
-                style={{ width: `${financialHealthScore}%` }}
-              />
-            </div>
-            <p className="mt-2 text-xs text-slate-500">
-              Uses budget discipline, monthly pace, and today's risk.
-            </p>
-          </article>
-
-          <article className="bb-surface rounded-2xl p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Projected Month-End
-            </p>
-            <p
-              className={`mt-2 text-2xl font-extrabold ${
-                isProjectedOverBudget ? 'text-danger-700' : 'text-emerald-700'
-              }`}
-            >
-              {formatAmount(projectedMonthEndSpend)}
-            </p>
-            <p className="mt-1 text-xs text-slate-500">
-              {totalBudgetLimit > 0
-                ? isProjectedOverBudget
-                  ? `Projected over by ${formatAmount(projectedMonthVariance)}`
-                  : `Projected under by ${formatAmount(
-                      Math.abs(projectedMonthVariance)
-                    )}`
-                : 'Create budgets to enable projection tracking'}
-            </p>
-          </article>
-
-          <article className="bb-surface rounded-2xl p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Recommended Daily Cap
-            </p>
-            <p className="mt-2 text-2xl font-extrabold text-slate-900">
-              {formatAmount(recommendedDailyCap)}
-            </p>
-            <p className="mt-1 text-xs text-slate-500">
-              To stay on target for the next {monthDaysRemaining} day
-              {monthDaysRemaining > 1 ? 's' : ''}.
-            </p>
-          </article>
-
-          <article className="bb-surface rounded-2xl p-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-              Smart Signals
-            </p>
-            <p className="mt-2 text-sm text-slate-700">
-              Largest expense today:{' '}
-              <span className="font-bold text-slate-900">
-                {largestExpenseToday.amount
-                  ? `${largestExpenseToday.description || 'Expense'} (${formatAmount(
-                      largestExpenseToday.amount
-                    )})`
-                  : 'No expenses logged today'}
-              </span>
-            </p>
-            <p className="mt-2 text-sm text-slate-700">
-              No-spend streak:{' '}
-              <span className="font-bold text-slate-900">
-                {noSpendStreakDays} day{noSpendStreakDays === 1 ? '' : 's'}
-              </span>
-            </p>
-          </article>
-        </section>
-
-        {error && (
-          <div className="mb-6 p-4 bg-danger-50 border border-danger-200 text-danger-700 rounded-lg">
-            {error}
-          </div>
-        )}
-
-        {loading && budgets.length === 0 ? (
-          <LoadingSpinner fullScreen={false} message="Loading your dashboard..." />
-        ) : budgets.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24">
-            <h2 className="text-3xl font-extrabold text-slate-900 mb-4">
-              {hasCreatedBudgetBefore
-                ? 'No active budgets'
-                : 'Welcome to Budget Buddy'}
-            </h2>
-            <p className="text-lg text-slate-600 mb-8 text-center max-w-xl">
-              {hasCreatedBudgetBefore
-                ? 'You currently have no budgets set up. Create a new budget to continue tracking your spending.'
-                : 'Create your first budget category to activate live tracking and daily warning intelligence.'}
-            </p>
-            <button
+              className="bb-btn-primary"
               onClick={() => {
                 setEditingBudget(null);
                 setShowBudgetForm(true);
               }}
-              className="px-8 py-4 bg-slate-900 text-white text-xl font-bold rounded-lg shadow-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2 transition"
             >
-              {hasCreatedBudgetBefore
-                ? 'Create Budget'
-                : 'Create Your First Budget'}
+              New budget
+            </button>
+            {selectedBudget && (
+              <button
+                type="button"
+                className="bb-btn-secondary"
+                onClick={() => {
+                  setEditingTransaction(null);
+                  setShowTransactionForm(true);
+                }}
+              >
+                New transaction
+              </button>
+            )}
+          </div>
+        </div>
+
+        <section className="bb-hero-strip">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-end">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase text-[#d7f86f]">
+                {operatingStatus}
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold leading-tight lg:text-3xl">
+                {formatAmount(remainingMonthBudget)} available for the month
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-[#b8c9c1]">
+                {nextMove}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 lg:gap-3">
+              <div className="rounded-[8px] bg-white/8 p-3 ring-1 ring-white/10">
+                <span className="bb-hero-metric-label">Today</span>
+                <span className="bb-hero-metric-value mt-1 block">{formatAmount(todayExpenseTotal)}</span>
+              </div>
+              <div className="rounded-[8px] bg-white/8 p-3 ring-1 ring-white/10">
+                <span className="bb-hero-metric-label">Used</span>
+                <span className="bb-hero-metric-value mt-1 block">{formatAmount(totalBudgetSpent)}</span>
+              </div>
+              <div className="rounded-[8px] bg-[#d7f86f] p-3 text-[#071b16]">
+                <span className="text-[11px] font-semibold text-[#405229]">Health</span>
+                <span className="mt-1 block text-lg font-semibold tabular-nums">{financialHealthScore}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Mobile: horizontal chips */}
+        <div className="bb-metric-scroll">
+          <div className="bb-metric-chip">
+            <p className="text-xs text-[#64716d]">Daily cap</p>
+            <p className="text-base font-semibold tabular-nums mt-0.5">{formatAmount(dailyBudgetTarget)}</p>
+          </div>
+          <div className="bb-metric-chip">
+            <p className="bb-metric-cell-label">Month pace</p>
+            <p className="text-base font-semibold tabular-nums mt-0.5">{spendPacePercent}%</p>
+          </div>
+          <div className="bb-metric-chip">
+            <p className="bb-metric-cell-label">Projected</p>
+            <p className="text-base font-semibold tabular-nums mt-0.5">{formatAmount(projectedMonthEndSpend)}</p>
+          </div>
+        </div>
+
+        <section className="bb-metric-bar">
+          <div className="bb-metric-cell">
+            <p className="bb-metric-cell-label">Total budget</p>
+            <p className="bb-metric-cell-value">{formatAmount(totalBudgetLimit)}</p>
+          </div>
+          <div className="bb-metric-cell">
+            <p className="bb-metric-cell-label">Today</p>
+            <p className="bb-metric-cell-value">{formatAmount(todayExpenseTotal)}</p>
+          </div>
+          <div className="bb-metric-cell">
+            <p className="bb-metric-cell-label">Month pace</p>
+            <p className="bb-metric-cell-value">{spendPacePercent}%</p>
+            <p className="mt-1 text-xs text-[#64716d]">{paceLabel}</p>
+          </div>
+          <div className="bb-metric-cell">
+            <p className="bb-metric-cell-label">Health score</p>
+            <p className="bb-metric-cell-value">{financialHealthScore}</p>
+          </div>
+        </section>
+
+        <DashboardPreferences
+          currency={currency}
+          onCurrencyChange={handleCurrencyQuickChange}
+          isUpdatingPreferences={isUpdatingPreferences}
+          alertPreferences={alertPreferences}
+          alertThresholdDraft={alertThresholdDraft}
+          onAlertThresholdChange={handleAlertThresholdDraftChange}
+          onEmailToggle={handleEmailAlertsToggle}
+          onSaveThresholds={handleSaveAlertThresholds}
+          onSendTestEmail={handleSendTestEmail}
+          isSendingEmailTest={isSendingEmailTest}
+          thresholdDirty={thresholdDraftDirty}
+          browserSupported={browserSupported}
+          browserPermission={browserPermission}
+          onEnableDesktopAlerts={handleEnableDesktopAlerts}
+          isRequestingDesktopAlerts={isRequestingDesktopAlerts}
+        />
+
+        {error && <div className="bb-alert-error">{error}</div>}
+
+        {loading && budgets.length === 0 ? (
+          <LoadingSpinner fullScreen={false} message="Loading your dashboard..." />
+        ) : budgets.length === 0 ? (
+          <div className="bb-premium-card p-10 text-center">
+            <p className="text-sm font-medium text-[#10201b]">
+              {hasCreatedBudgetBefore ? 'No active budgets' : 'Get started'}
+            </p>
+              <p className="text-xs text-[#64716d] mt-2 max-w-sm mx-auto">
+              Create your first category budget to track spending.
+            </p>
+            <button
+              type="button"
+              className="bb-btn-primary mt-6"
+              onClick={() => {
+                setEditingBudget(null);
+                setShowBudgetForm(true);
+              }}
+            >
+              Create budget
             </button>
           </div>
         ) : (
           <>
-            <div className="flex space-x-4 mb-8 border-b border-slate-200">
+            <div className="bb-segmented lg:hidden">
               <button
+                type="button"
+                className={`bb-segment ${activeTab === 'overview' ? 'bb-segment-active' : ''}`}
                 onClick={() => setActiveTab('overview')}
-                className={`px-4 py-2 font-medium border-b-2 transition ${
+              >
+                Overview
+              </button>
+              <button
+                type="button"
+                className={`bb-segment ${activeTab === 'transactions' ? 'bb-segment-active' : ''}`}
+                onClick={() => setActiveTab('transactions')}
+              >
+                Transactions
+              </button>
+            </div>
+
+            <div className="hidden lg:inline-flex w-fit gap-1 rounded-[8px] bg-[#e4ebe5] p-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab('overview')}
+                className={`rounded-[6px] px-4 py-2 text-sm font-semibold ${
                   activeTab === 'overview'
-                    ? 'border-slate-900 text-slate-900'
-                    : 'border-transparent text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-[#10201b] shadow-sm'
+                    : 'text-[#64716d]'
                 }`}
               >
                 Overview
               </button>
               <button
+                type="button"
                 onClick={() => setActiveTab('transactions')}
-                className={`px-4 py-2 font-medium border-b-2 transition ${
+                className={`rounded-[6px] px-4 py-2 text-sm font-semibold ${
                   activeTab === 'transactions'
-                    ? 'border-slate-900 text-slate-900'
-                    : 'border-transparent text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-[#10201b] shadow-sm'
+                    : 'text-[#64716d]'
                 }`}
               >
                 Transactions
@@ -1212,200 +985,115 @@ const DashboardPage = () => {
             </div>
 
             {activeTab === 'overview' && (
-              <>
-                <BudgetStats budgets={budgets} />
-
-                {existingCategories.length < 8 && (
-                  <button
-                    onClick={() => {
-                      setEditingBudget(null);
-                      setShowBudgetForm(true);
-                    }}
-                    className="mb-8 px-6 py-3 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition font-medium"
-                  >
-                    Create New Budget
-                  </button>
-                )}
-
-                <h2 className="text-2xl font-bold text-slate-900 mb-6">
-                  Your Budgets
-                </h2>
-                <BudgetList
-                  budgets={budgets}
-                  loading={loading}
-                  onEdit={handleEditBudget}
-                  onDelete={handleDeleteBudget}
-                  onSelectTransaction={handleSelectBudgetForTransaction}
-                />
-
-                <div className="mt-12 pt-8 border-t border-slate-200">
-                  <h2 className="text-2xl font-bold text-slate-900 mb-6">
-                    Summary
-                  </h2>
-                  <Summary budgets={budgets} transactions={transactions} />
+              <div className="space-y-5 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_380px] lg:gap-6 lg:items-start">
+                <div className="space-y-5 min-w-0">
+                  <BudgetList
+                    budgets={budgets}
+                    loading={loading}
+                    onEdit={handleEditBudget}
+                    onDelete={handleDeleteBudget}
+                    onSelectTransaction={handleSelectBudgetForTransaction}
+                  />
                 </div>
-
-                <div className="mt-12 pt-8 border-t border-slate-200">
-                  <h2 className="text-2xl font-bold text-slate-900 mb-6">
-                    Activity Timeline
-                  </h2>
-                  <div className="bb-surface rounded-2xl p-5">
-                    {!activityLoaded ? (
-                      <p className="text-sm text-slate-500">Loading activity timeline...</p>
-                    ) : activityItems.length === 0 ? (
-                      <p className="text-sm text-slate-500">
-                        No activity logged yet. Actions will appear here in real time.
-                      </p>
-                    ) : (
-                      <div className="space-y-3">
-                        {activityItems.slice(0, 10).map((item) => {
-                          const amountValue = Number(item.metadata?.amount);
-                          const hasAmount = Number.isFinite(amountValue) && amountValue > 0;
-                          return (
-                            <article
-                              key={item._id}
-                              className="rounded-xl border border-slate-200 bg-white px-4 py-3"
-                            >
-                              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                                <p className="text-sm font-semibold text-slate-900">
-                                  {item.summary || buildActionLabel(item.action)}
-                                </p>
-                                <span
-                                  className={`inline-flex w-fit items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold ${getActionTone(
-                                    item.action
-                                  )}`}
-                                >
-                                  {buildActionLabel(item.action)}
-                                </span>
-                              </div>
-                              <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-slate-500">
-                                <span>
-                                  {formatDate(item.createdAt)} at {formatTime(item.createdAt)}
-                                </span>
-                                {hasAmount && (
-                                  <span className="font-semibold text-slate-700">
-                                    {formatAmount(amountValue)}
-                                  </span>
-                                )}
-                                {item.metadata?.category && (
-                                  <span className="bb-pill bg-slate-100 text-slate-700 border border-slate-200">
-                                    {item.metadata.category}
-                                  </span>
-                                )}
-                              </div>
-                            </article>
-                          );
-                        })}
-                      </div>
-                    )}
+                <section className="bb-premium-card lg:sticky lg:top-6 min-w-0 p-4">
+                  <div className="mb-3 flex items-start justify-between gap-3">
+                    <div>
+                      <h2 className="bb-section-title">Activity stream</h2>
+                      <p className="bb-section-subtitle">Latest movement across budgets.</p>
+                    </div>
+                    <span className="rounded-[6px] bg-[#edf5ef] px-2.5 py-1 text-xs font-semibold text-[#07885b]">
+                      Live
+                    </span>
                   </div>
-                </div>
-              </>
+                  <ActivityFeed
+                    items={activityItems}
+                    loaded={activityLoaded}
+                    formatActionLabel={buildActionLabel}
+                  />
+                </section>
+              </div>
             )}
 
             {activeTab === 'transactions' && (
-              <div className="space-y-6">
-                <div className="bb-surface rounded-lg p-4 sm:p-5 space-y-4">
-                  <p className="text-sm text-slate-600">
-                    You are viewing transactions for{' '}
-                    <span className="font-semibold text-slate-900">
-                      {selectedBudget?.category || 'all budgets'}
-                    </span>
-                    . Choose a budget to add a new transaction quickly.
+              <div className="space-y-4">
+                <section className="bb-premium-card p-4 space-y-3">
+                  <p className="text-sm text-[#42524d]">
+                    Filter: <strong>{selectedBudget?.category || 'All categories'}</strong>
                   </p>
-                  <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
-                    <div className="w-full lg:max-w-sm">
-                      <label className="block text-xs font-semibold text-slate-600 mb-1 uppercase tracking-wide">
-                        Budget filter
-                      </label>
-                      <select
-                        value={selectedBudgetId || ''}
-                        onChange={(e) => handleBudgetFilterChange(e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300 outline-none text-sm bg-white"
-                      >
-                        <option value="">All budgets</option>
-                        {budgets.map((budget) => (
-                          <option key={budget._id} value={budget._id}>
-                            {budget.category}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!selectedBudgetId) return;
-                          setEditingTransaction(null);
-                          setShowTransactionForm(true);
-                        }}
-                        disabled={!selectedBudgetId}
-                        className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        New Transaction
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleExportCsv}
-                        className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-100"
-                      >
-                        Export CSV
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <input
-                      type="text"
-                      value={transactionSearch}
-                      onChange={(e) => setTransactionSearch(e.target.value)}
-                      placeholder="Search description or notes"
-                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300 outline-none text-sm"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
                     <select
+                      className="bb-select"
+                      value={selectedBudgetId || ''}
+                      onChange={(e) => handleBudgetFilterChange(e.target.value)}
+                    >
+                      <option value="">All budgets</option>
+                      {budgets.map((b) => (
+                        <option key={b._id} value={b._id}>
+                          {b.category}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      className="bb-select"
                       value={transactionType}
                       onChange={(e) => setTransactionType(e.target.value)}
-                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300 outline-none text-sm bg-white"
                     >
                       <option value="all">All types</option>
                       <option value="expense">Expense</option>
                       <option value="income">Income</option>
                     </select>
                     <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={minAmount}
-                      onChange={(e) => setMinAmount(e.target.value)}
-                      placeholder="Min amount"
-                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300 outline-none text-sm"
+                      className="bb-input"
+                      placeholder="Search"
+                      value={transactionSearch}
+                      onChange={(e) => setTransactionSearch(e.target.value)}
                     />
                     <input
+                      className="bb-input"
                       type="number"
-                      min="0"
-                      step="0.01"
+                      placeholder="Min"
+                      value={minAmount}
+                      onChange={(e) => setMinAmount(e.target.value)}
+                    />
+                    <input
+                      className="bb-input"
+                      type="number"
+                      placeholder="Max"
                       value={maxAmount}
                       onChange={(e) => setMaxAmount(e.target.value)}
-                      placeholder="Max amount"
-                      className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300 outline-none text-sm"
                     />
                   </div>
-                </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      className="bb-btn-primary bb-btn-sm"
+                      disabled={!selectedBudgetId}
+                      onClick={() => {
+                        setEditingTransaction(null);
+                        setShowTransactionForm(true);
+                      }}
+                    >
+                      Add
+                    </button>
+                    <button type="button" className="bb-btn-secondary bb-btn-sm" onClick={handleExportCsv}>
+                      Export
+                    </button>
+                  </div>
+                </section>
 
-                <TransactionList
-                  transactions={filteredTransactions}
-                  loading={loading}
-                  onEdit={handleEditTransaction}
-                  onDelete={handleDeleteTransaction}
-                />
+                <section className="bb-premium-card">
+                  <TransactionList
+                    transactions={filteredTransactions}
+                    loading={loading}
+                    onEdit={handleEditTransaction}
+                    onDelete={handleDeleteTransaction}
+                  />
+                </section>
               </div>
             )}
           </>
         )}
-      </main>
-
-      <Footer />
+      </div>
 
       <BudgetForm
         isOpen={showBudgetForm}
@@ -1432,7 +1120,7 @@ const DashboardPage = () => {
           }}
         />
       )}
-    </div>
+    </AppShell>
   );
 };
 

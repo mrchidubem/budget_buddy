@@ -18,6 +18,12 @@ import {
   deleteBudget,
 } from '../controllers/budgetController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
+import {
+  validateCreateBudget,
+  validateUpdateBudget,
+  validateDeleteBudget,
+  handleValidationErrors,
+} from '../middleware/validationMiddleware.js';
 
 const router = express.Router();
 
@@ -26,9 +32,31 @@ router.use(authMiddleware);
 
 // Budget routes
 router.get('/', getAllBudgets);
-router.get('/:id', getBudgetById);
-router.post('/', createBudget);
-router.put('/:id', updateBudget);
-router.delete('/:id', deleteBudget);
+router.get('/:id', (req, res, next) => {
+  // Validate ID before controller
+  const { id } = req.params;
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid budget ID',
+      statusCode: 400,
+    });
+  }
+  next();
+}, getBudgetById);
+
+router.post('/', validateCreateBudget, handleValidationErrors, createBudget);
+router.put(
+  '/:id',
+  validateUpdateBudget,
+  handleValidationErrors,
+  updateBudget
+);
+router.delete(
+  '/:id',
+  validateDeleteBudget,
+  handleValidationErrors,
+  deleteBudget
+);
 
 export default router;

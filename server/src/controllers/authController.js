@@ -227,7 +227,6 @@ export const registerUser = async (req, res, next) => {
       success: true,
       message: 'User registered successfully',
       statusCode: HTTP_STATUS.CREATED,
-      token: accessToken,  // optional – can be removed if relying only on cookie
       user: user.toJSON(),
     });
   } catch (error) {
@@ -282,7 +281,6 @@ export const loginUser = async (req, res, next) => {
       success: true,
       message: 'Login successful',
       statusCode: HTTP_STATUS.OK,
-      token: accessToken,  // optional
       user: user.toJSON(),
     });
   } catch (error) {
@@ -377,7 +375,6 @@ export const refreshAuthToken = async (req, res, next) => {
       success: true,
       message: 'Session refreshed',
       statusCode: HTTP_STATUS.OK,
-      token: accessToken,
       user: user.toJSON(),
     });
   } catch (error) {
@@ -387,8 +384,86 @@ export const refreshAuthToken = async (req, res, next) => {
 };
 
 export const updateUserPreferences = async (req, res, next) => {
-  // Your existing code – no changes needed here
-  // ... (keeping it short – copy your original if you want)
+  try {
+    const { preferredCurrency, alertPreferences } = req.body;
+
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        success: false,
+        message: ERROR_MESSAGES.USER_NOT_FOUND,
+        statusCode: HTTP_STATUS.NOT_FOUND,
+      });
+    }
+
+    if (preferredCurrency !== undefined) {
+      const code = String(preferredCurrency).toUpperCase();
+      if (!SUPPORTED_CURRENCIES.includes(code)) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          success: false,
+          message: 'Unsupported currency',
+          statusCode: HTTP_STATUS.BAD_REQUEST,
+        });
+      }
+      user.preferredCurrency = code;
+    }
+
+    if (alertPreferences && typeof alertPreferences === 'object') {
+      if (typeof alertPreferences.emailEnabled === 'boolean') {
+        user.alertPreferences.emailEnabled = alertPreferences.emailEnabled;
+      }
+
+      if (alertPreferences.dailyThresholdPercent !== undefined) {
+        const daily = Number(alertPreferences.dailyThresholdPercent);
+        if (!Number.isFinite(daily) || daily < 50 || daily > 100) {
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({
+            success: false,
+            message: 'Daily threshold must be between 50 and 100',
+            statusCode: HTTP_STATUS.BAD_REQUEST,
+          });
+        }
+        user.alertPreferences.dailyThresholdPercent = daily;
+      }
+
+      if (alertPreferences.budgetThresholdPercent !== undefined) {
+        const budgetPct = Number(alertPreferences.budgetThresholdPercent);
+        if (!Number.isFinite(budgetPct) || budgetPct < 50 || budgetPct > 100) {
+          return res.status(HTTP_STATUS.BAD_REQUEST).json({
+            success: false,
+            message: 'Budget threshold must be between 50 and 100',
+            statusCode: HTTP_STATUS.BAD_REQUEST,
+          });
+        }
+        user.alertPreferences.budgetThresholdPercent = budgetPct;
+      }
+    }
+
+    await user.save();
+
+    await trackActivity({
+      userId: user._id,
+      actorId: user._id,
+      action: 'user.preferences_update',
+      entityType: 'user',
+      entityId: user._id,
+      summary: 'Updated account preferences',
+      metadata: {
+        preferredCurrency: user.preferredCurrency,
+        alertPreferences: user.alertPreferences,
+      },
+      req,
+    });
+
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: 'Preferences updated successfully',
+      statusCode: HTTP_STATUS.OK,
+      user: user.toJSON(),
+    });
+  } catch (error) {
+    logger.error('Update preferences error', error);
+    next(error);
+  }
 };
 
 export const logoutUser = async (req, res, next) => {

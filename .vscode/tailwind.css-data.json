@@ -1,0 +1,33 @@
+{
+  "version": 1.1,
+  "atDirectives": [
+    {
+      "name": "@config",
+      "description": "Tailwind CSS v4 — path to tailwind.config.js"
+    },
+    {
+      "name": "@import",
+      "description": "Import Tailwind or other CSS"
+    },
+    {
+      "name": "@apply",
+      "description": "Tailwind — apply utility classes in CSS"
+    },
+    {
+      "name": "@layer",
+      "description": "Tailwind — base, components, or utilities layer"
+    },
+    {
+      "name": "@theme",
+      "description": "Tailwind v4 — theme tokens"
+    },
+    {
+      "name": "@utility",
+      "description": "Tailwind v4 — custom utility"
+    },
+    {
+      "name": "@source",
+      "description": "Tailwind v4 — content sources"
+    }
+  ]
+}

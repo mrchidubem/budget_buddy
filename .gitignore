@@ -1,2 +1,11 @@
 node_modules/
-client/node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+devout*.txt
+deverr*.txt
+coverage/
+.vscode/settings.json

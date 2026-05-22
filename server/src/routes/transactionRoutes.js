@@ -20,6 +20,13 @@ import {
   getTransactionStats,
 } from '../controllers/transactionController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
+import {
+  validateCreateTransaction,
+  validateUpdateTransaction,
+  validateDeleteTransaction,
+  validateTransactionQuery,
+  handleValidationErrors,
+} from '../middleware/validationMiddleware.js';
 
 const router = express.Router();
 
@@ -27,11 +34,55 @@ const router = express.Router();
 router.use(authMiddleware);
 
 // Transaction routes
-router.get('/', getAllTransactions);
-router.get('/stats/:budgetId', getTransactionStats);
-router.get('/:id', getTransactionById);
-router.post('/', createTransaction);
-router.put('/:id', updateTransaction);
-router.delete('/:id', deleteTransaction);
+router.get(
+  '/',
+  validateTransactionQuery,
+  handleValidationErrors,
+  getAllTransactions
+);
+router.post(
+  '/',
+  validateCreateTransaction,
+  handleValidationErrors,
+  createTransaction
+);
+
+router.get('/stats/:budgetId', (req, res, next) => {
+  const { budgetId } = req.params;
+  if (!budgetId.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid budget ID',
+      statusCode: 400,
+    });
+  }
+  next();
+}, getTransactionStats);
+
+router.get('/:id', (req, res, next) => {
+  const { id } = req.params;
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid transaction ID',
+      statusCode: 400,
+    });
+  }
+  next();
+}, getTransactionById);
+
+router.put(
+  '/:id',
+  validateUpdateTransaction,
+  handleValidationErrors,
+  updateTransaction
+);
+
+router.delete(
+  '/:id',
+  validateDeleteTransaction,
+  handleValidationErrors,
+  deleteTransaction
+);
 
 export default router;

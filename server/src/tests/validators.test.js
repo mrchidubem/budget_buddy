@@ -15,10 +15,10 @@ test('validateEmail accepts valid emails and rejects invalid ones', () => {
   assert.equal(validateEmail('invalid-email'), false);
 });
 
-test('validatePassword enforces uppercase and number requirements', () => {
-  assert.equal(validatePassword('Password1'), true);
-  assert.equal(validatePassword('password1'), false);
-  assert.equal(validatePassword('Password'), false);
+test('validatePassword enforces complexity requirements', () => {
+  assert.equal(validatePassword('Password1!'), true);
+  assert.equal(validatePassword('password1!'), false);
+  assert.equal(validatePassword('Password!'), false);
 });
 
 test('validateMongoId validates 24-char hex IDs', () => {

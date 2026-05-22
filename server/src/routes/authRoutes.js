@@ -17,17 +17,32 @@ import {
   logoutUser,
 } from '../controllers/authController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
+import {
+  validateRegister,
+  validateLogin,
+  validateUpdatePreferences,
+  handleValidationErrors,
+} from '../middleware/validationMiddleware.js';
+import { authRateLimiter } from '../middleware/rateLimitMiddleware.js';
 
 const router = express.Router();
 
-// Public routes
-router.post('/register', registerUser);
-router.post('/login', loginUser);
+router.use(authRateLimiter);
+
+// Public routes with validation
+router.post('/register', validateRegister, handleValidationErrors, registerUser);
+router.post('/login', validateLogin, handleValidationErrors, loginUser);
 router.post('/refresh', refreshAuthToken);
 
-// Protected routes
+// Protected routes with validation
 router.get('/me', authMiddleware, getCurrentUser);
-router.put('/preferences', authMiddleware, updateUserPreferences);
+router.put(
+  '/preferences',
+  authMiddleware,
+  validateUpdatePreferences,
+  handleValidationErrors,
+  updateUserPreferences
+);
 router.post('/logout', authMiddleware, logoutUser);
 
 export default router;

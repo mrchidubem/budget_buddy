@@ -14,6 +14,8 @@ import RegisterPage from './pages/RegisterPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import BudgetsPage from './pages/BudgetsPage.jsx';
 import ReportsPage from './pages/ReportsPage.jsx';
+import GoalsPage from './pages/GoalsPage.jsx';
+import RecurringPage from './pages/RecurringPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 
 const App = () => {
@@ -46,6 +48,22 @@ const App = () => {
           element={
             <PrivateRoute>
               <ReportsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/goals"
+          element={
+            <PrivateRoute>
+              <GoalsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/recurring"
+          element={
+            <PrivateRoute>
+              <RecurringPage />
             </PrivateRoute>
           }
         />

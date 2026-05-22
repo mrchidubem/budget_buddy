@@ -8,13 +8,13 @@ import Budget from '../models/Budget.js';
 import logger from '../utils/logger.js';
 import HTTP_STATUS from '../constants/httpStatusCodes.js';
 import ERROR_MESSAGES from '../constants/errorMessages.js';
-import { sendBudgetAlertEmail, sendEmail } from '../utils/emailService.js';
+import {
+  getEmailProvider,
+  sendBudgetAlertEmail,
+  sendEmail,
+} from '../utils/emailService.js';
 import { validateMongoId } from '../utils/validators.js';
 import { trackActivity } from '../utils/activityLogger.js';
-
-const resolveEmailProvider = () => {
-  return 'simulated-log';
-};
 
 export const sendTestAlertEmail = async (req, res, next) => {
   try {
@@ -48,7 +48,7 @@ export const sendTestAlertEmail = async (req, res, next) => {
       entityType: 'alert',
       entityId: user._id,
       summary: 'Sent alert email test',
-      metadata: { provider: resolveEmailProvider() },
+      metadata: { provider: getEmailProvider() },
       req,
     });
 
@@ -57,7 +57,7 @@ export const sendTestAlertEmail = async (req, res, next) => {
       message: 'Test email alert recorded',
       statusCode: HTTP_STATUS.OK,
       channel: 'email',
-      provider: resolveEmailProvider(),
+      provider: getEmailProvider(),
     });
   } catch (error) {
     logger.error('Error sending test alert email', error);
@@ -140,7 +140,7 @@ export const sendBudgetThresholdAlertEmail = async (req, res, next) => {
       message: 'Budget threshold email alert recorded',
       statusCode: HTTP_STATUS.OK,
       sent: true,
-      provider: resolveEmailProvider(),
+      provider: getEmailProvider(),
     });
   } catch (error) {
     logger.error('Error sending budget threshold email alert', error);

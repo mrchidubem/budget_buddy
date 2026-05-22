@@ -1,6 +1,8 @@
 ## Budget Buddy – Full-Stack Budgeting App
 
-Budget Buddy is a full-stack personal finance app built with a **React + Vite + Tailwind** frontend and a **Node.js + Express + MongoDB** backend. It helps users create budgets, track expenses and income, see insights, and (with the new backend pieces) support recurring transactions and savings goals.
+Budget Buddy is a production-style personal finance app: **React 19 + Vite + Tailwind v4** frontend and **Node.js + Express + MongoDB** API. It includes budgets, transactions, savings goals, recurring templates, activity logging, and mobile-first navigation.
+
+**Quick start:** see [DEPLOY.md](./DEPLOY.md) for local testing and deployment (Render + Vercel + Atlas).
 
 ---
 
@@ -16,12 +18,11 @@ Budget Buddy is a full-stack personal finance app built with a **React + Vite + 
 
 #### Authentication
 
-- Email + password registration and login.
-- JWT-based authentication with protected routes on the backend.
-- Frontend `AuthContext` stores the user and token.
-- **Inactivity + absolute logout**:
-  - After 30 minutes of no activity (mouse, keyboard, scroll), the user is logged out on the client and redirected to `/login`.
-  - There is also a 30-minute absolute session timeout based on when the session started; if you come back long after that, the token is cleared and you must log in again.
+- Email + password registration and login with bcrypt hashing.
+- **HttpOnly cookie-based JWT** (access + refresh tokens); no tokens in `localStorage`.
+- Automatic session refresh via `POST /api/auth/refresh` when access cookie expires.
+- Rate limiting on auth routes; `express-validator` on inputs.
+- User preferences API (`PUT /api/auth/preferences`) for currency and alert thresholds.
 
 #### Budgets
 

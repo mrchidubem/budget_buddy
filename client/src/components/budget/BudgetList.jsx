@@ -1,46 +1,50 @@
-import React from 'react';
 /**
- * Budget List Component
- * Displays all budgets in a grid layout
+ * BudgetList
+ * Responsive budget card grid.
  */
 
+import React from 'react';
 import BudgetCard from './BudgetCard.jsx';
 import LoadingSpinner from '../common/LoadingSpinner.jsx';
 
-const BudgetList = ({
-  budgets,
-  loading,
-  onEdit,
-  onDelete,
-  onSelectTransaction,
-}) => {
+const BudgetList = ({ budgets, loading, onEdit, onDelete, onSelectTransaction }) => {
   if (loading) {
     return <LoadingSpinner message="Loading budgets..." />;
   }
 
   if (budgets.length === 0) {
     return (
-      <div className="bb-surface rounded-2xl text-center py-12 px-6">
-        <p className="text-2xl font-extrabold text-slate-900 mb-2">No budgets yet</p>
-        <p className="text-slate-600 text-sm">
-          Create your first budget category to start tracking.
-        </p>
+      <div className="bb-panel p-8 text-center">
+        <p className="text-sm font-medium text-[#10201b]">No budgets yet</p>
+        <p className="text-xs text-[#64716d] mt-1">Create a category to start tracking.</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {budgets.map((budget) => (
-        <BudgetCard
-          key={budget._id}
-          budget={budget}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          onSelectTransaction={onSelectTransaction}
-        />
-      ))}
-    </div>
+    <section className="space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h2 className="bb-section-title">Budget categories</h2>
+          <p className="bb-section-subtitle">Active limits, utilization, and quick actions.</p>
+        </div>
+        <span className="text-xs font-semibold text-[#42524d] bg-white border border-[#e3e9e5] rounded-[6px] px-2.5 py-1 shadow-sm">
+          {budgets.length} total
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
+        {budgets.map((budget) => (
+          <BudgetCard
+            key={budget._id}
+            budget={budget}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onSelectTransaction={onSelectTransaction}
+          />
+        ))}
+      </div>
+    </section>
   );
 };
 

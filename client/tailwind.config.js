@@ -1,6 +1,6 @@
 /**
- * Tailwind CSS Configuration
- * Premium design tokens for Budget Buddy UI
+ * Tailwind CSS configuration
+ * Brand tokens aligned with enterprise fintech UI (navy + teal accent).
  */
 
 /** @type {import('tailwindcss').Config} */
@@ -9,29 +9,41 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f0f7ff',
-          100: '#e0effe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c3d66',
+        brand: {
+          50: '#f0f4f8',
+          100: '#dce6f0',
+          200: '#b8c9dc',
+          300: '#8aa3be',
+          400: '#5c7a9e',
+          500: '#3d5f7f',
+          600: '#2a4660',
+          700: '#1e3550',
+          800: '#0f2744',
+          900: '#0a1628',
+        },
+        accent: {
+          50: '#f0fdfa',
+          100: '#ccfbf1',
+          200: '#99f6e4',
+          300: '#5eead4',
+          400: '#2dd4bf',
+          500: '#14b8a6',
+          600: '#0d9488',
+          700: '#0f766e',
+          800: '#115e59',
+          900: '#134e4a',
         },
         success: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          200: '#bbf7d0',
-          300: '#86efac',
-          400: '#4ade80',
-          500: '#22c55e',
-          600: '#16a34a',
-          700: '#15803d',
-          800: '#166534',
-          900: '#145231',
+          50: '#ecfdf5',
+          100: '#d1fae5',
+          200: '#a7f3d0',
+          300: '#6ee7b7',
+          400: '#34d399',
+          500: '#10b981',
+          600: '#059669',
+          700: '#047857',
+          800: '#065f46',
+          900: '#064e3b',
         },
         danger: {
           50: '#fef2f2',
@@ -57,89 +69,38 @@ export default {
           800: '#92400e',
           900: '#78350f',
         },
-        info: {
-          50: '#ecf0ff',
-          100: '#dce4ff',
-          200: '#bcd4ff',
-          300: '#8cb5ff',
-          400: '#5a8dff',
-          500: '#3b5bff',
-          600: '#2e3aff',
-          700: '#2525db',
-          800: '#1f1fab',
-          900: '#1a1a7d',
-        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        sm: '0 1px 3px 0 rgba(0, 0, 0, 0.08)',
-        base: '0 2px 6px rgba(0, 0, 0, 0.1)',
-        md: '0 4px 12px rgba(0, 0, 0, 0.12)',
-        lg: '0 8px 24px rgba(0, 0, 0, 0.15)',
-        xl: '0 12px 32px rgba(0, 0, 0, 0.18)',
-        '2xl': '0 16px 40px rgba(0, 0, 0, 0.2)',
-        'glow-primary': '0 0 20px rgba(14, 165, 233, 0.3)',
-        'glow-success': '0 0 20px rgba(34, 197, 94, 0.3)',
+        card: '0 1px 2px rgba(10, 22, 40, 0.06), 0 4px 16px rgba(10, 22, 40, 0.04)',
+        elevated: '0 8px 24px rgba(10, 22, 40, 0.08)',
+      },
+      borderRadius: {
+        bb: '12px',
+        'bb-lg': '16px',
+      },
+      animation: {
+        fadeIn: 'fadeIn 0.25s ease-out',
+        slideUp: 'slideUp 0.3s ease-out',
+        slideDown: 'slideDown 0.25s ease-out',
       },
       keyframes: {
         fadeIn: {
-          '0%': { opacity: '0', transform: 'translateY(6px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
         slideUp: {
-          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         slideDown: {
-          '0%': { opacity: '0', transform: 'translateY(-16px)' },
+          '0%': { opacity: '0', transform: 'translateY(-8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        slideRight: {
-          '0%': { opacity: '0', transform: 'translateX(-16px)' },
-          '100%': { opacity: '1', transform: 'translateX(0)' },
-        },
-        pulse: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.5' },
-        },
-        shimmer: {
-          '0%': { backgroundPosition: '-1000px 0' },
-          '100%': { backgroundPosition: '1000px 0' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-8px)' },
-        },
-        glow: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.7' },
-        },
-      },
-      animation: {
-        fadeIn: 'fadeIn 0.3s ease-out',
-        slideUp: 'slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        slideDown: 'slideDown 0.3s ease-out',
-        slideRight: 'slideRight 0.3s ease-out',
-        pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        shimmer: 'shimmer 2.5s infinite',
-        float: 'float 3s ease-in-out infinite',
-        glow: 'glow 3s ease-in-out infinite',
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-      },
-      typography: {
-        DEFAULT: {
-          css: {
-            color: '#1f2937',
-          },
-        },
-      },
-      transitionDuration: {
-        '250': '250ms',
       },
     },
   },
   plugins: [],
 };
-
